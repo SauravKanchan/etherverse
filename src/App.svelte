@@ -1,11 +1,20 @@
 <script>
   import kaboom from "kaboom"
 
+  const DIMENSION = {
+    x: window.innerWidth,
+    y: window.innerHeight
+  }
+
+  const SCALE = 2
+
   kaboom({
     global: true,
-    scale: 2,
+    scale: SCALE,
     debug: true,
     background: [0,0,0,1],
+    width: DIMENSION.x,
+    height: DIMENSION.y
   })
 
   loadRoot("assets/")
@@ -17,48 +26,21 @@
     layers(["bg", "obj", "ui"], "obj")
   })
 
-
-  const map = [
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-    '                                                                     ',
-  ]
+  const tile = {width: 12, height: 12}
+  let map = []
+  let row = ''
+  for(let x=0; x < DIMENSION.x/(tile.width*SCALE); x++){
+    row += ' '
+  }
+  console.log({row})
+  for(let y=0; y <  DIMENSION.y/(tile.width*SCALE); y++){
+    map.push(row)
+  }
+  console.log(map)
 
   const levelCfg = {
-    width: 12,
-    height: 12,
+    width: tile.width,
+    height: tile.height,
     ' ': () => [sprite('grass')],
   }
   
@@ -66,10 +48,10 @@
 
   const player = add([
     sprite("hero"),
-    pos(100,100)
+    pos(DIMENSION.x/(SCALE*2), DIMENSION.y/(SCALE*2)),
+    scale(0.5)
   ])
 
-  let i = 0;
   player.play("idle-down")
 
   player.action(() => {
@@ -77,10 +59,11 @@
     const right = keyIsDown('right')
     const up = keyIsDown('up')
     const down = keyIsDown('down')
-    const speed = 10
+    const speed = 20/SCALE
     const currAnim = player.curAnim()
-    var currCam = camPos();
-    camPos(player.pos);
+    // var currCam = camPos();
+    camPos(player.pos.add(DIMENSION.x/(SCALE*2),DIMENSION.y/(SCALE*2)))
+    // camPos(player.pos)
   
 
     if (left) {
