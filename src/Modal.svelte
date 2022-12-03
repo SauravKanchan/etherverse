@@ -33,7 +33,7 @@
 
 	if (previously_focused) {
 		onDestroy(() => {
-			previously_focused.focus();
+			// previously_focused.focus();
 		});
 	}
 </script>

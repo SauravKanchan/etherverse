@@ -10,3 +10,4 @@ export const ENTRY_BLOCKS = writable({
         y: 100,
     },
 })
+export const BRIDGE_DURATION = writable()
