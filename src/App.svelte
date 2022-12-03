@@ -5,6 +5,8 @@
   import { hallScene } from "./home";
   import { DIMENSION, SCALE } from "./constant";
   import { changeRoom } from "./utils";
+  import { start_hydrating } from "svelte/internal";
+  import { ENTRY_BLOCKS } from "./store";
 
   loadRoot("assets/");
   loadSprite("grass", "grass.png");
@@ -31,7 +33,18 @@
     let { map, levelCfg } = createCity();
     createBuilding(map);
     addLevel(map, levelCfg);
-
+    const entry_pos = get("building_entry")[1]
+      .inspect()
+      .pos.replaceAll(" ", "")
+      .replaceAll("(", "")
+      .replaceAll(")", "")
+      .split(",");
+    ENTRY_BLOCKS.set({
+      building: {
+        x: parseInt(entry_pos[0]),
+        y: parseInt(entry_pos[1]),
+      },
+    });
     const player = createPlayer({
       position,
       starting_animation: "idle-down",
@@ -45,12 +58,15 @@
     });
   });
 
-  go("game", {
-    position: {
-      x: DIMENSION.x / (SCALE * 2),
-      y: DIMENSION.y / (SCALE * 2),
-    },
-  });
+  hallScene();
+  go("hall", {});
+
+  // go("game", {
+  //   position: {
+  //     x: DIMENSION.x / (SCALE * 2),
+  //     y: DIMENSION.y / (SCALE * 2),
+  //   },
+  // });
 
   // debug.inspect = true;
 </script>

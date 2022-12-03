@@ -1,13 +1,17 @@
 import { makeMap } from "./city";
 import { DIMENSION, SCALE } from "./constant";
 import { createPlayer } from "./player";
+import { ENTRY_BLOCKS } from "./store";
 import { changeRoom, setOnMap } from "./utils";
-
+let entry_blocks;
+ENTRY_BLOCKS.subscribe((d)=> {
+  entry_blocks = d
+})
 export const hallScene = () => {
   scene("hall", ({ level, score }) => {
     layers(["bg", "obj", "ui"], "obj");
 
-    let map = makeMap({x: DIMENSION.x/2, y: DIMENSION.y/2})
+    let map = makeMap({x: DIMENSION.x/2-4, y: DIMENSION.y/2-16})
 
     // border
     for(let i=0; i < DIMENSION.y; i ++) {
@@ -37,15 +41,14 @@ export const hallScene = () => {
     addLevel(map, levelCfg);
 
     const player = createPlayer({
-      position: {x: DIMENSION.x/4+8,y: DIMENSION.y/2-32},
+      position: {x: DIMENSION.x/4-8,y: DIMENSION.y/2-36},
       starting_animation:"idle-up"
     })
     
-    const nft_room = add([
+    const nft = add([
       text("NFT Room >"),
-      scale(0.5),
-      pos(600, 120),
-      layer("game"),
+      scale(0.3),
+      pos(DIMENSION.x/2-150, 120),
       { value: 0 },
     ]);
 
@@ -54,7 +57,7 @@ export const hallScene = () => {
     // });
 
     changeRoom(player, 'exit', 'Press X to exit your room', ()=>{
-      go("game", {position: {x: DIMENSION.x/(SCALE*2)-150, y: DIMENSION.y/(SCALE*2)+150}})
+      go("game", {position: entry_blocks.building})
     })
   });
 }
