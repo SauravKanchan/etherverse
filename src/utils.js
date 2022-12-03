@@ -16,7 +16,8 @@ export const setOnMap = (map, x, y, char) => {
     return map
 }
 
-export const changeRoom = (player,obj,hover_text,func) => {
+export const changeRoom = (player,obj,hover_text,func, text_displacement={x: 0, y:0}) => {
+    console.log({obj})
     player.onCollide(obj, (d) => {
         if(lock) return
         if (!player.text?.parent) {
@@ -24,23 +25,25 @@ export const changeRoom = (player,obj,hover_text,func) => {
             text(hover_text),
             scale(0.2),
             layer("ui"),
-            pos(player.pos.x, player.pos.y),
+            pos(player.pos.x + text_displacement.x, player.pos.y+text_displacement.y),
             lifespan(3, { fade: 2 }),
           ]);
         }
     });  
     
-    keyDown("x", () => {
+   keyDown('x', ()=> {
         if(lock) return
+        console.log("in keydown")
+        console.log(get(obj), obj)
         get(obj).forEach(g => {
             if (player.isTouching(g)) {
+                console.log("calling func")
                 func()
+                IS_LOCK.set(true)
+                    setTimeout(()=>{
+                    IS_LOCK.set(false)
+                }, 1000)
             }
         })
-
-        IS_LOCK.set(true)
-        setTimeout(()=>{
-            IS_LOCK.set(false)
-        }, 1000)
     }); 
 }

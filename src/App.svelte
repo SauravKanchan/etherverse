@@ -2,7 +2,7 @@
   import "./kaboom";
   import { createBuilding, createCity } from "./city";
   import { createPlayer } from "./player";
-  import { hallScene } from "./home";
+  import { hallScene, nftsScene } from "./home";
   import { DIMENSION, SCALE } from "./constant";
   import { changeRoom } from "./utils";
   import { start_hydrating } from "svelte/internal";
@@ -58,8 +58,8 @@
     });
   });
 
-  hallScene();
-  go("hall", {});
+  nftsScene();
+  go("nfts", {});
 
   // go("game", {
   //   position: {

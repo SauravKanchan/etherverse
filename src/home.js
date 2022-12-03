@@ -7,6 +7,8 @@ let entry_blocks;
 ENTRY_BLOCKS.subscribe((d)=> {
   entry_blocks = d
 })
+
+const NFT_ROOM_DOOR_ROW = 8
 export const hallScene = () => {
   scene("hall", ({ level, score }) => {
     layers(["bg", "obj", "ui"], "obj");
@@ -28,13 +30,20 @@ export const hallScene = () => {
     setOnMap(map, map[0].length/2+1, map.length-2, 'e')
     setOnMap(map, map[0].length/2, map.length-1, 'g')
 
+
+    setOnMap(map, map[0].length-1, NFT_ROOM_DOOR_ROW, 'n')
+    setOnMap(map, map[0].length-2, NFT_ROOM_DOOR_ROW-1, 'N')
+    setOnMap(map, map[0].length-2, NFT_ROOM_DOOR_ROW, 'N')
+    setOnMap(map, map[0].length-2, NFT_ROOM_DOOR_ROW+1, 'N')
+
     const levelCfg = {
       width: 16,
       height: 16,
       "*": () => [sprite("mb"), area(), solid() ],
       " ": () => [sprite("ht"), "wall", scale(18/16)],
       'g': () => [sprite("door"), area(), solid(), "gate"],
-      'n': () => [sprite("door"), area(), solid(),  "nft" ],
+      'n': () => [sprite("door"), area(), solid()],
+      'N': () => [sprite("entry"), area(), "nfts-entry"],
       'e': () => [sprite('entry'), area(), 'exit']
     };
 
@@ -48,17 +57,23 @@ export const hallScene = () => {
     const nft = add([
       text("NFT Room >"),
       scale(0.3),
-      pos(DIMENSION.x/2-150, 120),
+      pos(DIMENSION.x/2-175, 125),
       { value: 0 },
     ]);
-
-    // player.onCollide("nft", () => {
-    //   go("nfts", {});
-    // });
 
     changeRoom(player, 'exit', 'Press X to exit your room', ()=>{
       go("game", {position: entry_blocks.building})
     })
+
+
+    changeRoom(player, 'nfts-entry', 'Press X to NFT room', ()=>{
+      nftsScene()
+      go("nfts", {position: entry_blocks.building})
+    }, {
+      x: -150,
+      y: 15
+    })
+
   });
 }
 
@@ -67,25 +82,19 @@ export const nftsScene = () => {
     layers(["bg", "obj", "ui"], "obj");
 
 
-    const maps = [
-      [
-        "************************************************",
-        "*                                              *",
-        "*                                              *",
-        "*                                              *",
-        "*      1     2     2                           *",
-        "g                                              *",
-        "g                                              *",
-        "*                                              *",
-        "*                                              *",
-        "*                                              *",
-        "*                                              *",
-        "*                                              *",
-        "*                                              *",
-        "*                                              *",
-        "************************************************",
-      ],
-    ];
+    let map = makeMap({x: DIMENSION.x/2-4, y: DIMENSION.y/2-16})
+        
+    // border
+    for(let i=0; i < DIMENSION.y; i ++) {
+      map = setOnMap(map, 0,i, "*")
+      map = setOnMap(map, map[0].length-1,i, "*")
+    }
+    for(let i=0; i < DIMENSION.x; i ++) {
+      map = setOnMap(map, i,0, "*")
+      map = setOnMap(map, i,map.length-1, "*")
+    }
+
+    setOnMap(map, 0, NFT_ROOM_DOOR_ROW, 'n')
 
     const levelCfg = {
       width: 16,
@@ -94,46 +103,16 @@ export const nftsScene = () => {
       " ": () => [sprite("cream-floor"), area(), "wall"],
       "1": () => [sprite("nft1"), area(), scale(0.5), z(1), "nft1"],
       "2": () => [sprite("nft2"), area(), scale(3), z(1)],
-      g: () => [sprite("gate"), area(), solid(), scale(1), "gate"],
+      "n": () => [sprite("door"), area(), solid(), scale(1), "gate"],
     };
 
-    addLevel(maps[0], levelCfg);
+    addLevel(map, levelCfg);
 
-    const player = add([
-      sprite("player"),
-      area(),
-      solid(),
-      pos(32, 80),
-      scale(1.5),
-      {
-        dir: vec2(1, 0),
-      },
-      "player",
-    ]);
-
-    const SPEED = 500;
-
-    onKeyDown("right", () => {
-      player.move(SPEED, 0);
-      // player.flipX(true);
-    });
-
-    onKeyDown("left", () => {
-      player.move(-SPEED, 0);
-      player.dir = vec2(-1, 0);
-      // player.flipX(true);
-    });
-
-    onKeyDown("up", () => {
-      player.move(0, -SPEED);
-      player.dir = vec2(0, 1);
-    });
-
-    onKeyDown("down", () => {
-      player.move(0, SPEED);
-      player.dir = vec2(0, 1);
-    });
-
+    const player = createPlayer({
+      position: {x: DIMENSION.x/4-8,y: DIMENSION.y/2-36},
+      starting_animation:"idle-up"
+    })
+ 
     // add([sprite('bg'), layer('bg'), scale(2)])
     onCollide("player", "gate", () => {
       go("hall", { level: 0, score: 0 });
