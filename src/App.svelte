@@ -276,8 +276,11 @@
         y: DIMENSION.y / (SCALE * 2),
     }
 
-    loadBridge()
-    go('bridge', { position: player_poistion })
+    // loadBridge()
+    // go('bridge', { position: player_poistion })
+
+    hallScene()
+    go('hall', {})
 
     // go('game', {
     //     position: player_poistion,

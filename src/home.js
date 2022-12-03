@@ -30,14 +30,14 @@ export const hallScene = () => {
 
         layers(['bg', 'obj', 'ui'], 'obj')
 
-        let map = makeMap({ x: DIMENSION.x / 2 - 4, y: DIMENSION.y / 2 - 16 })
-
+        let map = makeMap({ x: DIMENSION.x / 2 - 4, y: DIMENSION.y / 2 - 4 })
+        
         // border
-        for (let i = 0; i < DIMENSION.y; i++) {
+        for (let i = 0; i < map.length; i++) {
             map = setOnMap(map, 0, i, '*')
             map = setOnMap(map, map[0].length - 1, i, '*')
         }
-        for (let i = 0; i < DIMENSION.x; i++) {
+        for (let i = 0; i < map[0].length; i++) {
             map = setOnMap(map, i, 0, '*')
             map = setOnMap(map, i, map.length - 1, '*')
         }
@@ -51,6 +51,13 @@ export const hallScene = () => {
         setOnMap(map, map[0].length - 2, NFT_ROOM_DOOR_ROW - 1, 'N')
         setOnMap(map, map[0].length - 2, NFT_ROOM_DOOR_ROW, 'N')
         setOnMap(map, map[0].length - 2, NFT_ROOM_DOOR_ROW + 1, 'N')
+        
+        setOnMap(map, 0, NFT_ROOM_DOOR_ROW, 'a')
+        setOnMap(map, 1, NFT_ROOM_DOOR_ROW - 1, 'A')
+        setOnMap(map, 1, NFT_ROOM_DOOR_ROW, 'A')
+        setOnMap(map, 1, NFT_ROOM_DOOR_ROW + 1, 'A')
+        
+
 
         const levelCfg = {
             width: 16,
@@ -60,6 +67,8 @@ export const hallScene = () => {
             g: () => [sprite('door'), area(), solid(), 'gate'],
             n: () => [sprite('door'), area(), solid()],
             N: () => [sprite('entry'), area(), 'nfts-entry'],
+            a: () => [sprite('door'), area(), solid()],
+            A: () => [sprite('entry'), area(), 'asset-entry'],
             e: () => [sprite('entry'), area(), 'exit'],
         }
 
@@ -94,6 +103,10 @@ export const hallScene = () => {
 
         changeRoom(player, 'exit', 'Press X to exit your room', () => {
             go('game', { position: entry_blocks.building })
+        })
+
+        changeRoom(player, 'asset-entry', 'Prexx X to see your asset', ()=>{
+          go("asset", {})
         })
 
         changeRoom(
