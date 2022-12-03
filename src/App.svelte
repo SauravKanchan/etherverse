@@ -39,12 +39,14 @@
       .replaceAll("(", "")
       .replaceAll(")", "")
       .split(",");
-    ENTRY_BLOCKS.set({
-      building: {
+    ENTRY_BLOCKS.update((d) => {
+      d.building = {
         x: parseInt(entry_pos[0]),
         y: parseInt(entry_pos[1]),
-      },
+      };
+      return d
     });
+
     const player = createPlayer({
       position,
       starting_animation: "idle-down",
@@ -58,15 +60,18 @@
     });
   });
 
-  nftsScene();
-  go("nfts", {});
+  // nftsScene();
+  // go("nfts", {});
 
-  // go("game", {
-  //   position: {
-  //     x: DIMENSION.x / (SCALE * 2),
-  //     y: DIMENSION.y / (SCALE * 2),
-  //   },
-  // });
+  // hallScene();
+  // go("hall", {});
+
+  go("game", {
+    position: {
+      x: DIMENSION.x / (SCALE * 2),
+      y: DIMENSION.y / (SCALE * 2),
+    },
+  });
 
   // debug.inspect = true;
 </script>

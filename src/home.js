@@ -9,8 +9,16 @@ ENTRY_BLOCKS.subscribe((d)=> {
 })
 
 const NFT_ROOM_DOOR_ROW = 8
+const NFT_ROOM_TEXT_HEIGHT = 125
 export const hallScene = () => {
-  scene("hall", ({ level, score }) => {
+    scene("hall", ({position, starting_animation}) => {
+      if (!position) {
+        position = {x: DIMENSION.x/4-8,y: DIMENSION.y/2-36}
+    }
+    if(!starting_animation){
+      starting_animation = "idle-up"
+    }
+
     layers(["bg", "obj", "ui"], "obj");
 
     let map = makeMap({x: DIMENSION.x/2-4, y: DIMENSION.y/2-16})
@@ -49,15 +57,30 @@ export const hallScene = () => {
 
     addLevel(map, levelCfg);
 
+    const nft_pos = get("nfts-entry")[1]
+    .inspect()
+    .pos.replaceAll(" ", "")
+    .replaceAll("(", "")
+    .replaceAll(")", "")
+    .split(",");
+
+    ENTRY_BLOCKS.update(d => {
+      d.nft = {
+        x: parseInt(nft_pos[0]),
+        y: parseInt(nft_pos[1])
+      }
+      return d
+    })
+
     const player = createPlayer({
-      position: {x: DIMENSION.x/4-8,y: DIMENSION.y/2-36},
-      starting_animation:"idle-up"
+      position,
+      starting_animation
     })
     
     const nft = add([
       text("NFT Room >"),
       scale(0.3),
-      pos(DIMENSION.x/2-175, 125),
+      pos(DIMENSION.x/2-175, NFT_ROOM_TEXT_HEIGHT),
       { value: 0 },
     ]);
 
@@ -68,7 +91,7 @@ export const hallScene = () => {
 
     changeRoom(player, 'nfts-entry', 'Press X to NFT room', ()=>{
       nftsScene()
-      go("nfts", {position: entry_blocks.building})
+      go("nfts", {position: { x: 32, y: NFT_ROOM_TEXT_HEIGHT }})
     }, {
       x: -150,
       y: 15
@@ -78,10 +101,14 @@ export const hallScene = () => {
 }
 
 export const nftsScene = () => {
-  scene("nfts", ({ }) => {
+  scene("nfts", ({ position, starting_animation }) => {
+    if(!position) {   
+      position = { x: 32, y: NFT_ROOM_TEXT_HEIGHT }
+    }
+    if(!starting_animation) {
+      starting_animation = "idle-right"
+    }
     layers(["bg", "obj", "ui"], "obj");
-
-
     let map = makeMap({x: DIMENSION.x/2-4, y: DIMENSION.y/2-16})
         
     // border
@@ -95,6 +122,9 @@ export const nftsScene = () => {
     }
 
     setOnMap(map, 0, NFT_ROOM_DOOR_ROW, 'n')
+    setOnMap(map, 1, NFT_ROOM_DOOR_ROW-1, 'N')
+    setOnMap(map, 1, NFT_ROOM_DOOR_ROW, 'N')
+    setOnMap(map, 1, NFT_ROOM_DOOR_ROW+1, 'N')
 
     const levelCfg = {
       width: 16,
@@ -104,19 +134,20 @@ export const nftsScene = () => {
       "1": () => [sprite("nft1"), area(), scale(0.5), z(1), "nft1"],
       "2": () => [sprite("nft2"), area(), scale(3), z(1)],
       "n": () => [sprite("door"), area(), solid(), scale(1), "gate"],
+      'N': () => [sprite("entry"), area(), "hall-entry"],
     };
 
     addLevel(map, levelCfg);
 
     const player = createPlayer({
-      position: {x: DIMENSION.x/4-8,y: DIMENSION.y/2-36},
-      starting_animation:"idle-up"
+      position,
+      starting_animation
     })
  
-    // add([sprite('bg'), layer('bg'), scale(2)])
-    onCollide("player", "gate", () => {
-      go("hall", { level: 0, score: 0 });
-    });
+    changeRoom(player, 'hall-entry', 'Press x to go to hall', ()=>{
+      hallScene()
+      go("hall", {position: entry_blocks.nft, starting_animation: 'idle-left' })
+    })
 
     //on player colliding
 
@@ -129,7 +160,7 @@ export const nftsScene = () => {
         pos(player.pos.x, player.pos.y),
         lifespan(3, { fade: 2 }),
       ]);
+    })
 
-    });
   });
 }

@@ -4,5 +4,9 @@ export const ENTRY_BLOCKS = writable({
     building: {
         x: 100,
         y: 100
+    },
+    nft: {
+        x: 100,
+        y: 100
     }
 });
