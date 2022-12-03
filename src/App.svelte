@@ -18,9 +18,15 @@
         end: 15,
     }
     let time = 0
+    let showNotifications,
+        showBridge,
+        selected,
+        amount,
+        tokens = ['ETH', 'DAI', 'MATIC']
     BRIDGE_DURATION.subscribe((d) => {
         bridge_duration = d
         // bridge_duration = 10
+        showBridge = false
         console.log(DIMENSION.x * 0.3125)
         let interval = setInterval(() => {
             truck_obj.pos.x =
@@ -52,11 +58,7 @@
         console.log(e)
     })
 
-    let showNotifications,
-        showBridge = true,
-        selected,
-        amount,
-        tokens = ['ETH', 'DAI', 'MATIC']
+
 
     const handleBridgeTransfer = async () => {
         // console.log("handler bridge");
