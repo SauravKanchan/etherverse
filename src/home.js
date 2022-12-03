@@ -230,7 +230,7 @@ export const nftsScene = () => {
                             }
                         })
 
-                        keyDown('x', () => {
+                        onKeyPress('x', () => {
                             if (lock) return
                             get(name).forEach((g) => {
                                 if (player.isTouching(g)) {

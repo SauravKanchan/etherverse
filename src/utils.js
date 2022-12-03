@@ -37,18 +37,20 @@ export const changeRoom = (
                 lifespan(3, { fade: 2 }),
             ])
         }
-    })
 
-    keyDown('x', () => {
-        if (lock) return
-        get(obj).forEach((g) => {
-            if (player.isTouching(g)) {
-                func()
-                IS_LOCK.set(true)
-                setTimeout(() => {
-                    IS_LOCK.set(false)
-                }, 1000)
-            }
+        onKeyPress('x', () => {
+            if (lock) return
+            get(obj).forEach((g) => {
+                if (player.isTouching(g)) {
+                    func()
+                    IS_LOCK.set(true)
+                    setTimeout(() => {
+                        IS_LOCK.set(false)
+                    }, 1000)
+                }
+            })
         })
     })
+
+    
 }

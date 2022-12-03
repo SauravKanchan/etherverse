@@ -60,18 +60,18 @@
     });
   });
 
-  // nftsScene();
-  // go("nfts", {});
+  nftsScene();
+  go("nfts", {});
 
   // hallScene();
   // go("hall", {});
 
-  go("game", {
-    position: {
-      x: DIMENSION.x / (SCALE * 2),
-      y: DIMENSION.y / (SCALE * 2),
-    },
-  });
+  // go("game", {
+  //   position: {
+  //     x: DIMENSION.x / (SCALE * 2),
+  //     y: DIMENSION.y / (SCALE * 2),
+  //   },
+  // });
 
   // debug.inspect= true
 
