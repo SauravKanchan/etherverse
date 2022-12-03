@@ -6,8 +6,6 @@
   import { DIMENSION, SCALE } from "./constant";
   import { changeRoom } from "./utils";
 
-
-
   loadRoot("assets/");
   loadSprite("grass", "grass.png");
   loadSprite("bb", "building_bottom.png");
@@ -38,9 +36,10 @@
       position,
       starting_animation: "idle-down",
     });
-    
 
-    changeRoom(player, "building_entry", "Press X to enter your room",() => {
+    player.setScale(SCALE);
+
+    changeRoom(player, "building_entry", "Press X to enter your room", () => {
       hallScene();
       go("hall", {});
     });
@@ -48,8 +47,8 @@
 
   go("game", {
     position: {
-      x: DIMENSION.x / (SCALE * 2) - 150,
-      y: DIMENSION.y / (SCALE * 2) + 150,
+      x: DIMENSION.x / (SCALE * 2),
+      y: DIMENSION.y / (SCALE * 2),
     },
   });
 

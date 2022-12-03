@@ -17,7 +17,6 @@ export const setOnMap = (map, x, y, char) => {
 }
 
 export const changeRoom = (player,obj,hover_text,func) => {
-
     player.onCollide(obj, (d) => {
         if (!player.text?.parent) {
           player.text = add([
@@ -33,16 +32,16 @@ export const changeRoom = (player,obj,hover_text,func) => {
     });  
     
     keyDown("x", () => {
-        if (!lock) {
-            get(obj).forEach(g => {
-                if (player.isTouching(g)) {
-                    func()
-                }
-              })
-              IS_LOCK.set(true)
-        }
+        get(obj).forEach(g => {
+            if (player.isTouching(g)) {
+                func()
+            }
+        })
+
+        IS_LOCK.set(true)
         setTimeout(()=>{
             IS_LOCK.set(false)
-        }, 2000)
+            console.log("setting")
+        }, 1000)
     }); 
 }

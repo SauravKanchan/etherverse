@@ -1,15 +1,27 @@
-import { DIMENSION, SCALE } from "./constant";
+import { DIMENSION } from "./constant";
+
+const scene_scale = () => {
+    let sl = 1;
+    return {
+        setScale(scale){
+            sl = scale
+        },
+        getScale() {
+            return sl
+        }
+    }
+}
 
 export const createPlayer = ({position,starting_animation}) => {
     if(!starting_animation)starting_animation="idle-down"
     const player = add([
         sprite("hero"),
-        // pos(DIMENSION.x/(SCALE*2), DIMENSION.y/(SCALE*2)),
         pos(position.x, position.y),
         scale(0.5),
         area(),
         solid(),
-        "player"
+        "player",
+        scene_scale()
       ])
     
       player.play(starting_animation)
@@ -20,10 +32,17 @@ export const createPlayer = ({position,starting_animation}) => {
         const up = keyIsDown('up')
         const down = keyIsDown('down')
         const speed = 200
+        let scene_scale = player.getScale()
         
         const currAnim = player.curAnim()
-        // var currCam = camPos();
-        camPos(player.pos.add(DIMENSION.x/(SCALE*2),DIMENSION.y/(SCALE*2)))
+        let currCam = camPos();
+        if (player.pos.x>DIMENSION.x/(scene_scale*2)){
+            camPos(vec2(player.pos.x+DIMENSION.x/(scene_scale*2), currCam.y))
+        }
+        if (player.pos.y>DIMENSION.y/(scene_scale*2) && player.pos.y< DIMENSION.y - DIMENSION.y/(scene_scale*2)){
+            camPos(vec2(currCam.x, player.pos.y+DIMENSION.y/(scene_scale*2)))
+        }
+    
     
         if (left) {
             if(currAnim !== 'move-left') {
