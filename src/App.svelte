@@ -3,10 +3,10 @@
   import { createBuilding, createCity } from "./city";
   import { createPlayer } from "./player";
   import { hallScene, nftsScene } from "./home";
-  import { DIMENSION, SCALE } from "./constant";
+  import { SCALE } from "./constant";
   import { changeRoom } from "./utils";
-  import { start_hydrating } from "svelte/internal";
   import { ENTRY_BLOCKS } from "./store";
+    import { loadBridge } from "./bridge"
 
   loadRoot("assets/");
   loadSprite("grass", "grass.png");
@@ -60,11 +60,14 @@
     });
   });
 
-  nftsScene();
-  go("nfts", {});
+  // nftsScene();
+  // go("nfts", {});
 
   // hallScene();
   // go("hall", {});
+
+  loadBridge()
+  go("bridge", {})
 
   // go("game", {
   //   position: {

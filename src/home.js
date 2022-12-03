@@ -234,7 +234,10 @@ export const nftsScene = () => {
                             if (lock) return
                             get(name).forEach((g) => {
                                 if (player.isTouching(g)) {
-                                    window.open(`https://opensea.io/assets/ethereum/${nft["contract_address"]}/${nft['token_id']}`, '_blank')
+                                    window.open(
+                                        `https://opensea.io/assets/ethereum/${nft['contract_address']}/${nft['token_id']}`,
+                                        '_blank'
+                                    )
                                     IS_LOCK.set(true)
                                     setTimeout(() => {
                                         IS_LOCK.set(false)
@@ -242,7 +245,6 @@ export const nftsScene = () => {
                                 }
                             })
                         })
-
                     })
                 }
             })
