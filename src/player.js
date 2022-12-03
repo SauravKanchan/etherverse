@@ -16,6 +16,7 @@ export const createPlayer = ({position,starting_animation}) => {
     if(!starting_animation)starting_animation="idle-down"
     const player = add([
         sprite("hero"),
+        layer("obj"),
         pos(position.x, position.y),
         scale(0.5),
         area(),

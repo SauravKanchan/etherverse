@@ -1,8 +1,17 @@
 import { makeMap } from "./city";
-import { DIMENSION, SCALE } from "./constant";
+import { DIMENSION, SCALE, TILE } from "./constant";
 import { createPlayer } from "./player";
 import { ENTRY_BLOCKS } from "./store";
 import { changeRoom, setOnMap } from "./utils";
+
+import { IS_LOCK } from './store.js';
+let lock;
+
+IS_LOCK.subscribe(value => {
+    lock = value;
+});
+
+
 let entry_blocks;
 ENTRY_BLOCKS.subscribe((d)=> {
   entry_blocks = d
@@ -126,6 +135,12 @@ export const nftsScene = () => {
     setOnMap(map, 1, NFT_ROOM_DOOR_ROW, 'N')
     setOnMap(map, 1, NFT_ROOM_DOOR_ROW+1, 'N')
 
+    const NFT_START = {
+      x: 64,
+      y: 32
+    }
+    const NFT_COUNT = 20
+    const NFT_PER_ROW = 6
     const levelCfg = {
       width: 16,
       height: 16,
@@ -150,9 +165,7 @@ export const nftsScene = () => {
     })
 
     //on player colliding
-
     onCollide("player", "nft1", () => {
-
       add([
         text("Press X to open Nft"),
         scale(0.5),
@@ -161,6 +174,48 @@ export const nftsScene = () => {
         lifespan(3, { fade: 2 }),
       ]);
     })
+
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: ' e7fc089c-a88f-4c6f-b914-197c3e65d89f'
+      }
+    };
+    
+    loadRoot("")
+    fetch(`https://api.nftport.xyz/v0/accounts/0x5555763613a12D8F3e73be831DFf8598089d3dCa?chain=ethereum&page_size=50&include=metadata&page_size=${NFT_COUNT}`, options)
+    .then(response => response.json())
+    .then(response => {
+      let x = NFT_START.x
+      let y = NFT_START.y
+      let c = 0
+      for (let i = 0; i< response.nfts.length; i++)
+      {
+      let nft = response.nfts[i]
+      let name =`${nft['contract_address']}-${nft['token_id']}`
+      const ZOOM = 4;
+      if(!nft['file_url'])continue
+      loadSprite(name, nft['file_url']).then(d=>{
+        let nft_obj = add([
+          layer("obj"),
+          sprite(name),
+          pos(x,y),
+          area(),
+          scale(ZOOM*TILE.width/d.tex.width, ZOOM*TILE.height/d.tex.height),
+          solid(),
+          name,
+      ]);
+      x+=96
+      if(c%6==5){
+        y+= 96
+        x = NFT_START.x 
+      }
+      c++
+      })
+      }
+    })
+    .catch(err => console.error(err));
 
   });
 }
