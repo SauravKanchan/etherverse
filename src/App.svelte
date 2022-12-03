@@ -1,81 +1,81 @@
 <script>
-  import "./kaboom";
-  import { createBuilding, createCity } from "./city";
-  import { createPlayer } from "./player";
-  import { hallScene, nftsScene } from "./home";
-  import { SCALE } from "./constant";
-  import { changeRoom } from "./utils";
-  import { ENTRY_BLOCKS } from "./store";
-    import { loadBridge } from "./bridge"
+    import './kaboom'
+    import { createBuilding, createCity } from './city'
+    import { createPlayer } from './player'
+    import { hallScene, nftsScene } from './home'
+    import { DIMENSION, SCALE } from './constant'
+    import { changeRoom } from './utils'
+    import { ENTRY_BLOCKS } from './store'
+    import { loadBridge } from './bridge'
 
-  loadRoot("assets/");
-  loadSprite("grass", "grass.png");
-  loadSprite("bb", "building_bottom.png");
-  loadSprite("mb", "building_middle.png");
-  loadSprite("door", "door.png");
-  loadSprite("window", "window.png");
-  loadSpriteAtlas("player.png", "player.json");
-  loadSprite("brick", "brick.png");
-  loadSprite("ht", "house_tile.png");
-  loadSprite("bg", "grass.png");
-  loadSprite("ethtile", "eth.png");
-  loadSprite("gate", "gate.png");
-  loadSprite("player", "player.png");
-  loadSprite("stone-wall", "stone-wall.png");
-  loadSprite("brown-floor", "brown-floor.png");
-  loadSprite("cream-floor", "cream-floor.png");
-  loadSprite("nft1", "arcane.jpeg");
-  loadSprite("nft2", "nft2.png");
-  loadSprite("entry", "entry_block.png");
+    loadRoot('assets/')
+    loadSprite('grass', 'grass.png')
+    loadSprite('bb', 'building_bottom.png')
+    loadSprite('mb', 'building_middle.png')
+    loadSprite('door', 'door.png')
+    loadSprite('window', 'window.png')
+    loadSpriteAtlas('player.png', 'player.json')
+    loadSprite('brick', 'brick.png')
+    loadSprite('ht', 'house_tile.png')
+    loadSprite('bg', 'grass.png')
+    loadSprite('ethtile', 'eth.png')
+    loadSprite('gate', 'gate.png')
+    loadSprite('player', 'player.png')
+    loadSprite('stone-wall', 'stone-wall.png')
+    loadSprite('brown-floor', 'brown-floor.png')
+    loadSprite('cream-floor', 'cream-floor.png')
+    loadSprite('nft1', 'arcane.jpeg')
+    loadSprite('nft2', 'nft2.png')
+    loadSprite('entry', 'entry_block.png')
 
-  scene("game", ({ position }) => {
-    layers(["bg", "obj", "ui"], "obj");
-    let { map, levelCfg } = createCity();
-    createBuilding(map);
-    addLevel(map, levelCfg);
-    const entry_pos = get("building_entry")[1]
-      .inspect()
-      .pos.replaceAll(" ", "")
-      .replaceAll("(", "")
-      .replaceAll(")", "")
-      .split(",");
-    ENTRY_BLOCKS.update((d) => {
-      d.building = {
-        x: parseInt(entry_pos[0]),
-        y: parseInt(entry_pos[1]),
-      };
-      return d
-    });
+    scene('game', ({ position }) => {
+        layers(['bg', 'obj', 'ui'], 'obj')
+        let { map, levelCfg } = createCity()
+        createBuilding(map)
+        addLevel(map, levelCfg)
+        const entry_pos = get('building_entry')[1]
+            .inspect()
+            .pos.replaceAll(' ', '')
+            .replaceAll('(', '')
+            .replaceAll(')', '')
+            .split(',')
+        ENTRY_BLOCKS.update((d) => {
+            d.building = {
+                x: parseInt(entry_pos[0]),
+                y: parseInt(entry_pos[1]),
+            }
+            return d
+        })
 
-    const player = createPlayer({
-      position,
-      starting_animation: "idle-down",
-    });
+        const player = createPlayer({
+            position,
+            starting_animation: 'idle-down',
+        })
 
-    player.setScale(SCALE);
+        player.setScale(SCALE)
 
-    changeRoom(player, "building_entry", "Press X to enter your room", () => {
-      hallScene();
-      go("hall", {});
-    });
-  });
+        changeRoom(
+            player,
+            'building_entry',
+            'Press X to enter your room',
+            () => {
+                hallScene()
+                go('hall', {})
+            }
+        )
+    })
 
-  // nftsScene();
-  // go("nfts", {});
+    let player_poistion = {
+        x: DIMENSION.x / (SCALE * 2),
+        y: DIMENSION.y / (SCALE * 2),
+    }
 
-  // hallScene();
-  // go("hall", {});
+    loadBridge()
+    go('bridge', { position: player_poistion })
+   
+    // go('game', {
+    //     position: player_poistion,
+    // })
 
-  loadBridge()
-  go("bridge", {})
-
-  // go("game", {
-  //   position: {
-  //     x: DIMENSION.x / (SCALE * 2),
-  //     y: DIMENSION.y / (SCALE * 2),
-  //   },
-  // });
-
-  // debug.inspect= true
-
+    // debug.inspect= true
 </script>
