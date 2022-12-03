@@ -1,7 +1,7 @@
 import { makeMap } from "./city"
 import { DIMENSION } from "./constant"
 import { createPlayer } from "./player"
-import { setOnMap } from "./utils"
+import { changeRoom, setOnMap } from "./utils"
 import { fetchEnsDetails } from "./integrations/ens/"
 import { ethers } from "ethers"
 
@@ -77,9 +77,6 @@ export const ensScene = () => {
             '*': () => [sprite('mb'), area(), solid()],
             ' ': () => [sprite('ht'), 'wall', scale(18 / 16)],
             g: () => [sprite('door'), area(), solid(), 'gate'],
-            n: () => [sprite('door'), area(), solid()],
-            N: () => [sprite('entry'), area(), 'nfts-entry'],
-            a: () => [sprite('door'), area(), solid()],
             e: () => [sprite('entry'), area(), 'exit'],
             q: () => [sprite('ens'), area(), solid(), 'ens'],
             t: () => [sprite('telegram'), area(), solid(), 'telegram'],
@@ -168,11 +165,10 @@ export const ensScene = () => {
         }
 
 
-
-        player.onCollide("exit", () => {
-            go("hall", { position })
+        changeRoom(player, 'exit', 'Press X exit to hall', ()=>{
+            // ensScene();
+            go("hall", { position: {x:  map[0].length / 2 - 1, y: map.length - 2 }  })
         })
-
 
 
         // const nft = add([

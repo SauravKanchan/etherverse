@@ -4,7 +4,11 @@ import { createPlayer } from './player'
 import { ENTRY_BLOCKS } from './store'
 import { changeRoom, setOnMap } from './utils'
 
+import { ensScene } from './ens_office'
+
+
 import { IS_LOCK } from './store.js'
+import { assetScene } from './asset'
 let lock
 
 IS_LOCK.subscribe((value) => {
@@ -113,13 +117,15 @@ export const hallScene = () => {
             go('game', { position: entry_blocks.building })
         })
 
-        changeRoom(player, 'asset-entry', 'Press X to see your asset', ()=>{
-          go("assets", {})
+        changeRoom(player, 'asset-entry', 'Press X to see your assets', ()=>{
+          assetScene();
+          go("assets", {position: {x:  map[0].length / 2 - 1, y: map.length - 2 } });
         })
 
         changeRoom(player, 'ens-entry', 'Press X to check ENS Details', ()=>{
+            ensScene();
             go("ensOffice", { position: {x:  map[0].length / 2 - 1, y: map.length - 2 }  })
-          })
+        })
 
         changeRoom(
             player,

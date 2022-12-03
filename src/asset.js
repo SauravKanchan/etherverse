@@ -2,37 +2,19 @@ import { makeMap } from "./city"
 import { DIMENSION } from "./constant"
 import { createPlayer } from "./player"
 import { setOnMap } from "./utils"
-import { fetchEnsDetails } from "./integrations/ens/"
-import { ethers } from "ethers"
 
 export const assetScene = () => {
-    //Load Sprites
-    //     twitter.png
-    // github.png
-    // discord.png
-    loadRoot('assets/')
-
-    loadSprite('twitter', 'twitter.png')//done
-    loadSprite('ens', 'ens.png')//done
-    loadSprite('github', 'github.png')//done
-    loadSprite('discord', 'discord.png')//done
-    loadSprite('telegram', 'telegram.png') //done
-    loadSprite('linkedin', 'linkedin.png') //done
-    loadSprite('website', 'website.png') //done
-    loadSprite('email', 'email.png')//done
-
+ 
+    loadRoot('assets/');
+    loadSprite('eth', 'eth.png') ; //done
+    loadSprite('matic', 'matic.png') ; //done
+    loadSprite('dai', 'dai.png') ; //done
+   
     //@ts-ignore
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
 
-    // const address = "0x5555763613a12d8f3e73be831dff8598089d3dca";
-
-
-    //check the ens properties which are available
 
     scene('assets', async ({ position, starting_animation }) => {
-
-        const address = await (await provider.getSigner()).getAddress();
-        let ensDetails = await fetchEnsDetails(address);
 
         if (!position) {
             position = { x: DIMENSION.x / 4 - 8, y: DIMENSION.y / 2 - 36 }
@@ -62,14 +44,10 @@ export const assetScene = () => {
 
         //Set assets on map
 
-        setOnMap(map, 2, 4, 'q') //ens
-        setOnMap(map, 6, 4, 'd') //
-        setOnMap(map, 10, 4, 't') // 
-        setOnMap(map, 14, 4, 'v') // 
-        setOnMap(map, 2, 12, 'w') //
-        setOnMap(map, 6, 12, 'r') //
-        setOnMap(map, 10, 12, 'h') //
-        setOnMap(map, 14, 12, 'l') //
+        setOnMap(map, 4, 4, 'K') //eth
+        setOnMap(map, 8, 4, 'L') //dai
+        setOnMap(map, 12, 4, 'M') // matic
+     
 
         const levelCfg = {
             width: 16,
@@ -77,20 +55,13 @@ export const assetScene = () => {
             '*': () => [sprite('mb'), area(), solid()],
             ' ': () => [sprite('ht'), 'wall', scale(18 / 16)],
             g: () => [sprite('door'), area(), solid(), 'gate'],
-            n: () => [sprite('door'), area(), solid()],
-            N: () => [sprite('entry'), area(), 'nfts-entry'],
-            a: () => [sprite('door'), area(), solid()],
             e: () => [sprite('entry'), area(), 'exit'],
-            q: () => [sprite('ens'), area(), solid(), 'ens'],
-            t: () => [sprite('telegram'), area(), solid(), 'telegram'],
-            v: () => [sprite('email'), area(), solid(), 'email'],
-            w: () => [sprite('website'), area(), solid(), 'website'],
-            d: () => [sprite('discord'), area(), solid(), 'discord'],
-            r: () => [sprite('twitter'), area(), solid(), 'twitter'],
-            h: () => [sprite('github'), area(), solid(), 'github'],
-            l: () => [sprite('linkedin'), area(), solid(), 'linkedin'],
-
+            K: () => [sprite('eth'), area(), solid(), 'eth'],
+            L: () => [sprite('dai'), area(), solid(), 'dai'],
+            M: () => [sprite('matic'), area(), solid(), 'matic'],
         }
+
+        console.log("here");
 
         addLevel(map, levelCfg)
 
@@ -99,88 +70,10 @@ export const assetScene = () => {
             starting_animation,
         })
 
-        const entries = {
-            "twitter": {
-                ensName: "com.twitter",
-            },
-            "linkedin": {
-                ensName: "com.linkedin",
-            },
-            "discord": {
-                ensName: "com.discord",
-            },
-            "website": {
-                ensName: "url",
-            },
-            "email": {
-                ensName: "email",
-            },
-            "telegram": {
-                ensName: "org.telegram",
-            },
-            "github": {
-                ensName: "com.github",
-            },
-        }
+        // player.onCollide("exit", () => {
+        //     go("hall", { position })
+        // })
 
-
-        let ENS_TXT;
-
-
-        if (ensDetails) {
-            player.onCollide("ens", () => {
-                destroy(ENS_TXT);
-
-                ENS_TXT = add([
-                    text(`${ensDetails.ensName}`),
-                    scale(0.5),
-                    layer("ui"),
-                    pos(player.pos.x, player.pos.y),
-                    lifespan(5, { fade: 2 }),
-                ]);
-            })
-
-            if (ensDetails.ensName) {
-                for (let x of Object.keys(entries)) {
-                    player.onCollide(x, () => {
-                        destroy(ENS_TXT);
-
-                        ENS_TXT = add([
-                            text(`${ensDetails.details[entries[x].ensName] ? ensDetails.details[entries[x].ensName] : "-Not Found-"}`),
-                            scale(0.5),
-                            layer("ui"),
-                            pos(player.pos.x, player.pos.y),
-                            lifespan(5, { fade: 2 }),
-                        ]);
-                    })
-
-
-                }
-            }
-        }else{
-            ENS_TXT = add([
-                text("ENS Details Not Found"),
-                scale(0.5),
-                layer("ui"),
-                pos(DIMENSION.x/8, DIMENSION.y/8),
-               
-            ]);
-        }
-
-
-
-        player.onCollide("exit", () => {
-            go("hall", { position })
-        })
-
-
-
-        // const nft = add([
-        //     text('NFT Room >'),
-        //     scale(0.3),
-        //     pos(DIMENSION.x / 2 - 175, NFT_ROOM_TEXT_HEIGHT),
-        //     { value: 0 },
-        // ])
 
         // changeRoom(player, 'exit', 'Press X to exit your room', () => {
         //     go('game', { position: entry_blocks.building })

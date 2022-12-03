@@ -11,6 +11,7 @@
     import { setOnMap } from './utils'
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
+    
     let truck_obj
     let bridge_duration
     let water_pos = {
@@ -297,11 +298,11 @@
         y: DIMENSION.y / (SCALE * 2),
     }
 
-    loadBridge()
-    go('bridge', { position: player_poistion })
+    // loadBridge()
+    // go('bridge', { position: player_poistion })
 
-    // hallScene()
-    // go('hall', {})
+    hallScene()
+    go('hall', {})
 
     // go('game', {
     //     position: player_poistion,
