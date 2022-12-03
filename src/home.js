@@ -18,6 +18,7 @@ ENTRY_BLOCKS.subscribe((d) => {
 
 const NFT_ROOM_DOOR_ROW = 8
 const NFT_ROOM_TEXT_HEIGHT = 125
+let continuation
 export const hallScene = () => {
     scene('hall', ({ position, starting_animation }) => {
         if (!position) {
@@ -142,6 +143,7 @@ export const nftsScene = () => {
             y: 32,
         }
         const NFT_COUNT = 20
+        let page = ''
         const NFT_PER_ROW = 6
         const levelCfg = {
             width: 16,
@@ -169,17 +171,6 @@ export const nftsScene = () => {
             })
         })
 
-        //on player colliding
-        onCollide('player', 'nft1', () => {
-            add([
-                text('Press X to open Nft'),
-                scale(0.5),
-                layer('ui'),
-                pos(player.pos.x, player.pos.y),
-                lifespan(3, { fade: 2 }),
-            ])
-        })
-
         const options = {
             method: 'GET',
             headers: {
@@ -190,7 +181,7 @@ export const nftsScene = () => {
 
         loadRoot('')
         fetch(
-            `https://api.nftport.xyz/v0/accounts/0x5555763613a12D8F3e73be831DFf8598089d3dCa?chain=ethereum&page_size=50&include=metadata&page_size=${NFT_COUNT}`,
+            `https://api.nftport.xyz/v0/accounts/0x5555763613a12D8F3e73be831DFf8598089d3dCa?chain=ethereum&page_size=50&include=metadata&page_size=${NFT_COUNT}&continuation=${page}`,
             options
         )
             .then((response) => response.json())
@@ -198,6 +189,7 @@ export const nftsScene = () => {
                 let x = NFT_START.x
                 let y = NFT_START.y
                 let c = 0
+                continuation = response.continuation
                 for (let i = 0; i < response.nfts.length; i++) {
                     let nft = response.nfts[i]
                     let name = `${nft['contract_address']}-${nft['token_id']}`
@@ -222,6 +214,35 @@ export const nftsScene = () => {
                             x = NFT_START.x
                         }
                         c++
+
+                        player.onCollide(name, (d) => {
+                            if (lock) return
+                            // @ts-ignore
+                            if (player.text?.parent) {
+                                // @ts-ignore
+                                player.text = add([
+                                    text(nft['name']),
+                                    scale(0.2),
+                                    layer('ui'),
+                                    pos(player.pos.x, player.pos.y),
+                                    lifespan(3, { fade: 2 }),
+                                ])
+                            }
+                        })
+
+                        keyDown('x', () => {
+                            if (lock) return
+                            get(name).forEach((g) => {
+                                if (player.isTouching(g)) {
+                                    window.open(`https://opensea.io/assets/ethereum/${nft["contract_address"]}/${nft['token_id']}`, '_blank')
+                                    IS_LOCK.set(true)
+                                    setTimeout(() => {
+                                        IS_LOCK.set(false)
+                                    }, 1000)
+                                }
+                            })
+                        })
+
                     })
                 }
             })

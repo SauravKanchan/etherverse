@@ -37,7 +37,9 @@ export const createPlayer = ({ position, starting_animation }) => {
 
         const currAnim = player.curAnim()
         let currCam = camPos()
-        if (player.pos.x > DIMENSION.x / (scene_scale * 2)) {
+        if (player.pos.x > DIMENSION.x / (scene_scale * 2) && 
+            player.pos.x < DIMENSION.x - DIMENSION.x / (scene_scale * 2) 
+        ) {
             camPos(
                 vec2(player.pos.x + DIMENSION.x / (scene_scale * 2), currCam.y)
             )
