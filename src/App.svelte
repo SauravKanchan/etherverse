@@ -6,7 +6,158 @@
     import { DIMENSION, SCALE } from './constant'
     import { changeRoom } from './utils'
     import { ENTRY_BLOCKS } from './store'
-    import { loadBridge } from './bridge'
+    import Modal from './Modal.svelte'
+    let showNotifications, showBridge, selected, amount, tokens
+
+export const loadBridge = () => {
+    loadRoot('assets/')
+    loadSprite('fence-left', 'fence_left.png')
+    loadSprite('fence-right', 'fence_right.png')
+    loadSprite('fence-middle', 'fence_middle.png')
+    loadSprite('bridge', 'bridge.png')
+    loadSprite('bridge_floor', 'bridge_floor.png')
+    loadSprite('truck', 'truck.png')
+    loadSprite('road', 'road.png')
+    loadSprite('bridgeNS', 'bridgeNS.png')
+    loadSprite('counter', 'entry_block.png')
+    loadSprite('water', 'water2.png')
+    loadSprite('water_m', 'water_m.png')
+    loadSprite('mailbox', 'mailbox.png')
+
+    scene('bridge', ({ position, starting_animation }) => {
+        layers(['bg', 'obj', 'ui'], 'obj')
+        if (!starting_animation) starting_animation = 'idle-right'
+
+        let map = makeMap({ x: DIMENSION.x / 2 - 4, y: DIMENSION.y / 2 - 16 })
+
+        // border
+        for (let i = 0; i < DIMENSION.y; i++) {
+            map = setOnMap(map, 0, i, '*')
+            map = setOnMap(map, map[0].length - 1, i, '*')
+        }
+        for (let i = 0; i < DIMENSION.x; i++) {
+            map = setOnMap(map, i, 0, '*')
+            map = setOnMap(map, i, map.length - 1, '*')
+        }
+
+        // water
+        const water_pos = {
+            start: 5,
+            end: map[0].length-5 
+        }
+        for (let x=0; x<map[0].length;x++){
+            if(x<water_pos.start || x>water_pos.end) continue
+            for(let y=0; y< map.length; y++){
+                if(y<1 || y>map.length-2)continue
+                map = setOnMap(map, x, y, 'e')
+            }
+        }
+
+        // bridge
+        for (let x = 0; x < DIMENSION.y; x++) {
+            if(x<water_pos.start || x>water_pos.end) continue
+            map = setOnMap(map, x, 8, 'm')
+        }
+ 
+        for (let x = 0; x < DIMENSION.y; x++) {
+            if(x<water_pos.start || x>water_pos.end) continue
+            map = setOnMap(map, x, 9, 'b')
+            map = setOnMap(map, x, 10, 'b')
+            map = setOnMap(map, x, 11, 'b')
+            map = setOnMap(map, x, 12, 'b')
+        }
+
+
+        map = setOnMap(map, water_pos.start, 10, 't')
+
+        for (let x = 0; x < DIMENSION.y; x++) {
+            if(x<water_pos.start || x>water_pos.end) continue
+            map = setOnMap(map, x, 13, 'm')
+        }
+
+        for (let x = 0; x < DIMENSION.y; x++) {
+            if(x<water_pos.start || x>water_pos.end) continue
+            map = setOnMap(map, x, 14, 'f')
+            map = setOnMap(map, x, 15, 'f')
+        }
+
+        for (let x = 0; x < DIMENSION.y; x++) {
+            if(x<water_pos.start || x>water_pos.end) continue
+            map = setOnMap(map, x, 16, 'm')
+        }
+
+        const counter = {
+            x: 1,
+            y: 1,
+            width: 5,
+            height: 5
+        }
+
+        for (let x=counter.x; x<counter.width;x++){
+            for(let y=counter.y; y< counter.height; y++){
+                map = setOnMap(map, x, y, 'c')
+            }
+        }
+
+        add([
+            text("LIFI\nMovers"),
+            pos(15, 30),
+            scale(0.2),
+            layer("ui")
+        ])
+
+        const levelCfg = {
+            width: TILE.width,
+            height: TILE.height,
+            '*': () => [sprite('mb'), area(), solid(), scale(1.125)],
+            ' ': () => [sprite('bg'), area(), 'wall', scale(1.125)],
+            w: () => [sprite('water'), area(), solid(), scale(1.125)],
+            n: () => [sprite('gate'), area(), 'wall', scale(1.125)],
+            g: () => [sprite('gate'), area(), solid(), scale(1.125), 'gate'],
+            l: () => [sprite('fence-left'), area(), solid(), scale(1.125)],
+            r: () => [sprite('fence-right'), area(), solid(), scale(1.125)],
+            m: () => [sprite('fence-middle'), area(), solid(), scale(1.125)],
+            f: () => [sprite('bridgeNS'), area(), scale(1), scale(1.125)],
+            e: () => [sprite('water_m'), area(), solid(), scale(1.125)],
+            h: () => [sprite('mailbox'), area(), solid(), 'mailbox'],
+            b: () => [sprite('road'), area(), solid(), scale(1.125)],
+            c: () => [sprite('counter'), area(), solid(), scale(1), 'counter'],
+            t: () => [
+                sprite('truck'),
+                area(),
+                solid(),
+                layer('ui'),
+                scale(1.125),
+            ],
+        }
+
+        addLevel(map, levelCfg)
+
+        const player = createPlayer({ position, starting_animation })
+
+        let bridge_text
+
+        player.onCollide('counter', () => {
+            destroy(bridge_text)
+
+            bridge_text = add([
+                text('Press b to Bridge tokens'),
+                scale(0.5),
+                layer('ui'),
+                pos(player.pos.x, player.pos.y),
+                lifespan(3, { fade: 2 }),
+            ])
+
+            const bridgeCounter = onKeyPress('b', () => {
+                showNotifications = true
+            })
+
+            wait(3, () => {
+                bridgeCounter()
+            })
+        })
+    })
+}
 
     loadRoot('assets/')
     loadSprite('grass', 'grass.png')
@@ -72,10 +223,100 @@
 
     loadBridge()
     go('bridge', { position: player_poistion })
-   
+
     // go('game', {
     //     position: player_poistion,
     // })
 
     // debug.inspect= true
 </script>
+
+{#if showBridge}
+    <Modal>
+        <div
+            class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700"
+        >
+            <div class="p-4 sm:p-7">
+                <div class="text-center">
+                    <h1
+                        class="block text-2xl font-bold text-gray-800 dark:text-white"
+                    >
+                        Transfer Asset to Polygon
+                    </h1>
+                </div>
+
+                <div class="mt-5">
+                    <!-- <form> -->
+                    <div class="grid gap-y-4">
+                        <div>
+                            <label
+                                for="token"
+                                class="block text-sm font-bold ml-1 mb-2 dark:text-white"
+                                >Token</label
+                            >
+                            <div class="relative">
+                                <select
+                                    class="form-select appearance-none
+                  block
+                  w-full
+                  px-3
+                  py-1.5
+                  text-base
+                  font-normal
+                  text-gray-700
+                  bg-white bg-clip-padding bg-no-repeat
+                  border border-solid border-gray-300
+                  rounded
+                  transition
+                  ease-in-out
+                  m-0
+                  focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                    bind:value={selected}
+                                    selected="true"
+                                    on:change={() => (amount = 0)}
+                                >
+                                    {#each tokens as question}
+                                        <option value={question}>
+                                            {question}
+                                        </option>
+                                    {/each}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label
+                                for="email"
+                                class="block text-sm font-bold ml-1 mb-2 dark:text-white"
+                                >Amount</label
+                            >
+                            <div class="relative">
+                                <input
+                                    bind:value={amount}
+                                    id="amount"
+                                    name="amount"
+                                    class="py-3 px-4 block w-full border-2 border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                                    required
+                                    aria-describedby="email-error"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <button
+                                on:click={() => (showBridge = false)}
+                                class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                                >Cancel</button
+                            >
+                            <button
+                                on:click={handleBridgeTransfer}
+                                class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                                >Transfer</button
+                            >
+                        </div>
+                    </div>
+                    <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </Modal>
+{/if}
