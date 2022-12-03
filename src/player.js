@@ -1,19 +1,20 @@
 import { DIMENSION, SCALE } from "./constant";
 
-export const createPlayer = () => {
+export const createPlayer = ({position,starting_animation}) => {
+    if(!starting_animation)starting_animation="idle-down"
     const player = add([
         sprite("hero"),
-        pos(DIMENSION.x/(SCALE*2), DIMENSION.y/(SCALE*2)),
+        // pos(DIMENSION.x/(SCALE*2), DIMENSION.y/(SCALE*2)),
+        pos(position.x, position.y),
         scale(0.5),
-        layer("obj"),
         area(),
         solid(),
         "player"
       ])
     
-      player.play("idle-down")
+      player.play(starting_animation)
     
-      player.action(() => {
+      action(() => {
         const left = keyIsDown('left')
         const right = keyIsDown('right')
         const up = keyIsDown('up')
@@ -23,7 +24,6 @@ export const createPlayer = () => {
         const currAnim = player.curAnim()
         // var currCam = camPos();
         camPos(player.pos.add(DIMENSION.x/(SCALE*2),DIMENSION.y/(SCALE*2)))
-    
     
         if (left) {
             if(currAnim !== 'move-left') {
@@ -46,6 +46,6 @@ export const createPlayer = () => {
           }
           player.move(0,speed)
         }
-    
       })
+      return player
 }
