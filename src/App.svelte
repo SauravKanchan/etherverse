@@ -11,9 +11,28 @@
     import { setOnMap } from './utils'
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
+    let truck_obj
     let bridge_duration
-    BRIDGE_DURATION.subscribe(d=> {
-      bridge_duration = d
+    let water_pos = {
+        start: 5,
+        end: 15,
+    }
+    let time = 0
+    BRIDGE_DURATION.subscribe((d) => {
+        bridge_duration = d
+        // bridge_duration = 10
+        console.log(DIMENSION.x * 0.3125)
+        let interval = setInterval(() => {
+            truck_obj.pos.x =
+                DIMENSION.x / 4 -
+                300 +
+                (time / bridge_duration) * (DIMENSION.x * 0.3725)
+            time += 0.1
+            console.log(truck_obj.pos.x, time)
+        }, 100)
+        setTimeout(() => {
+            clearInterval(interval)
+        }, bridge_duration * 1000)
     })
 
     // @ts-ignore
@@ -32,9 +51,9 @@
     main().catch((e) => {
         console.log(e)
     })
-    
+
     let showNotifications,
-        showBridge,
+        showBridge = true,
         selected,
         amount,
         tokens = ['ETH', 'DAI', 'MATIC']
@@ -47,6 +66,7 @@
             signer,
             network: 'polygon',
         })
+        time = 0
         // alert(`answered question ${selected.id} (${selected.text}) with "${answer}"`);
     }
 
@@ -85,10 +105,7 @@
             }
 
             // water
-            const water_pos = {
-                start: 5,
-                end: map[0].length - 5,
-            }
+            water_pos = { ...water_pos, end: map[0].length - 5 }
             for (let x = 0; x < map[0].length; x++) {
                 if (x < water_pos.start || x > water_pos.end) continue
                 for (let y = 0; y < map.length; y++) {
@@ -111,7 +128,7 @@
                 map = setOnMap(map, x, 12, 'b')
             }
 
-            map = setOnMap(map, water_pos.start, 10, 't')
+            // map = setOnMap(map, water_pos.start, 10, 't')
 
             for (let x = 0; x < DIMENSION.y; x++) {
                 if (x < water_pos.start || x > water_pos.end) continue
@@ -177,16 +194,18 @@
                     scale(1),
                     'counter',
                 ],
-                t: () => [
-                    sprite('truck'),
-                    area(),
-                    solid(),
-                    layer('ui'),
-                    scale(1.125),
-                ],
             }
 
             addLevel(map, levelCfg)
+            truck_obj = add([
+                sprite('truck'),
+                layer('obj'),
+                pos(DIMENSION.x / 4 - 300, DIMENSION.y / 4),
+                scale(1.125),
+                area(),
+                solid(),
+                'player',
+            ])
 
             const player = createPlayer({ position, starting_animation })
 
@@ -276,11 +295,11 @@
         y: DIMENSION.y / (SCALE * 2),
     }
 
-    // loadBridge()
-    // go('bridge', { position: player_poistion })
+    loadBridge()
+    go('bridge', { position: player_poistion })
 
-    hallScene()
-    go('hall', {})
+    // hallScene()
+    // go('hall', {})
 
     // go('game', {
     //     position: player_poistion,
