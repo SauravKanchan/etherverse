@@ -6,7 +6,7 @@
   import { DIMENSION, SCALE } from "./constant";
   import { changeRoom } from "./utils";
 
-  let next_scene = {};
+
 
   loadRoot("assets/");
   loadSprite("grass", "grass.png");

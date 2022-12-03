@@ -1,3 +1,10 @@
+import { IS_LOCK } from './store.js';
+let lock;
+
+IS_LOCK.subscribe(value => {
+    lock = value;
+});
+
 export const setCharAt = (str,index,chr) => {
     if(index > str.length-1) return str;
     return str.substring(0,index) + chr + str.substring(index+1);
@@ -9,7 +16,8 @@ export const setOnMap = (map, x, y, char) => {
     return map
 }
 
-export const changeRoom = (player,obj,hover_text,func) => {   
+export const changeRoom = (player,obj,hover_text,func) => {
+
     player.onCollide(obj, (d) => {
         if (!player.text?.parent) {
           player.text = add([
@@ -25,10 +33,16 @@ export const changeRoom = (player,obj,hover_text,func) => {
     });  
     
     keyDown("x", () => {
-        get(obj).forEach(g => {
-          if (player.isTouching(g)) {
-              func()
-          }
-        })
+        if (!lock) {
+            get(obj).forEach(g => {
+                if (player.isTouching(g)) {
+                    func()
+                }
+              })
+              IS_LOCK.set(true)
+        }
+        setTimeout(()=>{
+            IS_LOCK.set(false)
+        }, 2000)
     }); 
 }
