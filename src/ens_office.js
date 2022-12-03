@@ -5,7 +5,7 @@ import { setOnMap } from "./utils"
 import { fetchEnsDetails } from "./integrations/ens/"
 import { ethers } from "ethers"
 
-export const assetScene = () => {
+export const ensScene = () => {
     //Load Sprites
     //     twitter.png
     // github.png
@@ -29,7 +29,7 @@ export const assetScene = () => {
 
     //check the ens properties which are available
 
-    scene('assets', async ({ position, starting_animation }) => {
+    scene('ensOffice', async ({ position, starting_animation }) => {
 
         const address = await (await provider.getSigner()).getAddress();
         let ensDetails = await fetchEnsDetails(address);

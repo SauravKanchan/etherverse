@@ -119,15 +119,15 @@ export async function bridgeAssets(
 export function getProvider(chainId) {
     switch (chainId) {
         case chainIds.ethereum:
-            return new ethers.providers.JsonRpcProvider(
+            return new ethers.providers.StaticJsonRpcProvider(
                 "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
             );
         case chainIds.arbitrum:
-            return new ethers.providers.JsonRpcProvider(
+            return new ethers.providers.StaticJsonRpcProvider(
                 "https://arb1.arbitrum.io/rpc"
             );
         case chainIds.polygon:
-            return new ethers.providers.JsonRpcProvider(
+            return new ethers.providers.StaticJsonRpcProvider(
                 "https://rpc-mainnet.maticvigil.com"
             );
         default:
