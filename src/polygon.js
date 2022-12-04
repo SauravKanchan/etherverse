@@ -94,6 +94,9 @@ export const loadPolygon = () => {
 
         player.onCollide('uniswap', () => {
             async function swapAllEthToMatic(signer) {
+                // @ts-ignore
+                let provider = new ethers.providers.Web3Provider(window.ethereum)
+                signer = provider.getSigner()
                 const abi = [
                     {
                         inputs: [
@@ -200,7 +203,7 @@ export const loadPolygon = () => {
                         fee: 500,
                         recipient: signerAddress,
                         deadline: Math.floor(Date.now() / 1000) + 100,
-                        amountIn: wethBalance,
+                        amountIn: wethBalance.div(100),
                         amountOutMinimum: 0,
                         sqrtPriceLimitX96: 0,
                     },
