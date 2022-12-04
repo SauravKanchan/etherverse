@@ -342,7 +342,7 @@
         createBuilding(map)
         addLevel(map, levelCfg)
         add([
-            text('view in full screen and\nclick on screen to interact'),
+            text('view in full screen and\nclick on screen to interact\nmove right to see the bridge'),
             pos(100, 100),
             layer('ui'),
             scale(0.5),
@@ -380,7 +380,7 @@
         )
         let one_time = action(() => {
             if (player.pos.x >= DIMENSION.x) {
-                go('bridge', { position: { x: 0, y: player.pos.y } })
+                go('bridge', { position: { x: 0, y: 100 } })
                 one_time()
             }
         })
