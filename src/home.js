@@ -210,6 +210,7 @@ export const nftsScene = () => {
             go('hall', {
                 position: entry_blocks.nft,
                 starting_animation: 'idle-left',
+                city
             })
         })
 
@@ -280,7 +281,7 @@ export const nftsScene = () => {
                                 get(name).forEach((g) => {
                                     if (player.isTouching(g)) {
                                         window.open(
-                                            `https://opensea.io/assets/ethereum/${nft['contract_address']}/${nft['token_id']}`,
+                                            `https://opensea.io/assets/${chain=="ethereum"?"ethereum":"matic"}/${nft['contract_address']}/${nft['token_id']}`,
                                             '_blank'
                                         )
                                         IS_LOCK.set(true)

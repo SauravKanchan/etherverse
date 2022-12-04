@@ -88,7 +88,6 @@
         loadSprite('water', 'water2.png')
         loadSprite('water_m', 'water_m.png')
         loadSprite('mailbox', 'mailbox.png')
-      
 
         scene('bridge', ({ position, starting_animation }) => {
             layers(['bg', 'obj', 'ui'], 'obj')
@@ -172,7 +171,34 @@
                 }
             }
 
-            add([text('LIFI\nMovers'), pos(15, 30), scale(0.2), layer('ui')])
+            const counter_polygon = {
+                x: map[0].length - 1,
+                y: 1,
+                width: 3,
+                height: 5,
+            }
+            console.log(counter_polygon.x, counter_polygon.width)
+            for (let x = 0; x <= counter_polygon.width; x++) {
+                for (let y = counter_polygon.y; y < counter_polygon.height; y++) {
+                    map = setOnMap(map, counter_polygon.x - x, y, 'C')
+                }
+            }
+
+
+            add([
+                text('LIFI\nMovers\nETH'),
+                pos(15, 30),
+                scale(0.2),
+                layer('ui'),
+            ])
+
+            add([
+                text('LIFI\nMovers\nPolygon'),
+                pos(DIMENSION.x/2-65, 30),
+                scale(0.2),
+                layer('ui'),
+            ])
+
 
             const levelCfg = {
                 width: TILE.width,
@@ -212,6 +238,13 @@
                     solid(),
                     scale(1),
                     'counter',
+                ],
+                C: () => [
+                    sprite('counter'),
+                    area(),
+                    solid(),
+                    scale(1),
+                    'counter-polygon',
                 ],
             }
 
@@ -289,9 +322,9 @@
     loadSprite('nft2', 'nft2.png')
     loadSprite('entry', 'entry_block.png')
 
-    loadSprite('eth', 'eth.png') ; //done
-    loadSprite('matic', 'matic.png') ; //done
-    loadSprite('dai', 'dai.png') ; //done
+    loadSprite('eth', 'eth.png') //done
+    loadSprite('matic', 'matic.png') //done
+    loadSprite('dai', 'dai.png') //done
 
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
@@ -353,14 +386,14 @@
     }
 
     loadBridge()
-    // go('bridge', { position: player_poistion })
+    go('bridge', { position: player_poistion })
 
     // hallScene()
     // go('hall', {})
 
-    go('game', {
-        position: player_poistion,
-    })
+    // go('game', {
+    //     position: player_poistion,
+    // })
     // loadPolygon()
     // go('polygon', { position: player_poistion })
 
