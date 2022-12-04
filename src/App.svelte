@@ -337,6 +337,13 @@
         let { map, levelCfg } = createCity()
         createBuilding(map)
         addLevel(map, levelCfg)
+        add([
+            text("view in full screen and\nclick on screen to interact"),
+            pos(100,100),
+            layer("ui"),
+            scale(0.5),
+            lifespan(3, { fade: 2 })
+        ])
         const entry_pos = get('building_entry')[1]
             .inspect()
             .pos.replaceAll(' ', '')
@@ -392,16 +399,14 @@
     }
 
     loadBridge()
+    loadPolygon()
+    hallScene()
     go('game', { position: player_poistion })
 
-    // hallScene()
-    // go('hall', {})
-
-    // go('game', {
-    //     position: player_poistion,
-    // })
-    loadPolygon()
-    go('polygon', { position: player_poistion })
+    go('game', {
+        position: player_poistion,
+    })
+    // go('polygon', { position: player_poistion })
 
     let Notificationitems
 
