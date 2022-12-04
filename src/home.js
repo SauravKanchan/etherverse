@@ -4,7 +4,11 @@ import { createPlayer } from './player'
 import { ENTRY_BLOCKS } from './store'
 import { changeRoom, setOnMap } from './utils'
 
+import { ensScene } from './ens_office'
+
+
 import { IS_LOCK } from './store.js'
+import { assetScene } from './asset'
 let lock
 
 IS_LOCK.subscribe((value) => {
@@ -57,6 +61,13 @@ export const hallScene = () => {
         setOnMap(map, 1, NFT_ROOM_DOOR_ROW, 'A')
         setOnMap(map, 1, NFT_ROOM_DOOR_ROW + 1, 'A')
 
+        //ENS Office
+        setOnMap(map, map[0].length / 2,  1, 's')
+        setOnMap(map, map[0].length / 2 - 1,  1, 's')
+        setOnMap(map, map[0].length / 2 + 1, 1, 's')
+        setOnMap(map, map[0].length / 2, 0, 'S')
+
+
         const levelCfg = {
             width: 16,
             height: 16,
@@ -68,6 +79,9 @@ export const hallScene = () => {
             a: () => [sprite('door'), area(), solid()],
             A: () => [sprite('entry'), area(), 'asset-entry'],
             e: () => [sprite('entry'), area(), 'exit'],
+            s: () => [sprite('entry'), area(), 'ens-entry'],
+            S: () => [sprite('door'), area(), 'ensOffice'],
+
         }
 
         addLevel(map, levelCfg)
@@ -103,8 +117,14 @@ export const hallScene = () => {
             go('game', { position: entry_blocks.building })
         })
 
-        changeRoom(player, 'asset-entry', 'Prexx X to see your asset', () => {
-            go('asset', {})
+        changeRoom(player, 'asset-entry', 'Press X to see your assets', ()=>{
+          assetScene();
+          go("assets", {position: {x:  map[0].length / 2 - 1, y: map.length - 2 } });
+        })
+
+        changeRoom(player, 'ens-entry', 'Press X to check ENS Details', ()=>{
+            ensScene();
+            go("ensOffice", { position: {x:  map[0].length / 2 - 1, y: map.length - 2 }  })
         })
 
         changeRoom(

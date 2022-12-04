@@ -11,7 +11,7 @@
     import { setOnMap } from './utils'
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
-    import kaboom from 'kaboom'
+    
     let truck_obj
     let bridge_duration
     let water_pos = {
@@ -313,8 +313,8 @@
     loadBridge()
     // go('bridge', { position: player_poistion })
 
-    // hallScene()
-    // go('hall', {})
+    hallScene()
+    go('hall', {})
 
     go('game', {
         position: player_poistion,

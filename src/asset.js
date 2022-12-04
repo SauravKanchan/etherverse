@@ -3,8 +3,19 @@ import { DIMENSION } from './constant'
 import { createPlayer } from './player'
 import { setOnMap } from './utils'
 
-export const hallScene = () => {
-    scene('hall', ({ position, starting_animation }) => {
+export const assetScene = () => {
+ 
+    loadRoot('assets/');
+    loadSprite('eth', 'eth.png') ; //done
+    loadSprite('matic', 'matic.png') ; //done
+    loadSprite('dai', 'dai.png') ; //done
+   
+    //@ts-ignore
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+
+    scene('assets', async ({ position, starting_animation }) => {
+
         if (!position) {
             position = { x: DIMENSION.x / 4 - 8, y: DIMENSION.y / 2 - 36 }
         }
@@ -31,18 +42,26 @@ export const hallScene = () => {
         setOnMap(map, map[0].length / 2 + 1, map.length - 2, 'e')
         setOnMap(map, map[0].length / 2, map.length - 1, 'g')
 
+        //Set assets on map
+
+        setOnMap(map, 4, 4, 'K') //eth
+        setOnMap(map, 8, 4, 'L') //dai
+        setOnMap(map, 12, 4, 'M') // matic
+     
+
         const levelCfg = {
             width: 16,
             height: 16,
             '*': () => [sprite('mb'), area(), solid()],
             ' ': () => [sprite('ht'), 'wall', scale(18 / 16)],
             g: () => [sprite('door'), area(), solid(), 'gate'],
-            n: () => [sprite('door'), area(), solid()],
-            N: () => [sprite('entry'), area(), 'nfts-entry'],
-            a: () => [sprite('door'), area(), solid()],
-            A: () => [sprite('entry'), area(), 'asset-entry'],
             e: () => [sprite('entry'), area(), 'exit'],
+            K: () => [sprite('eth'), area(), solid(), 'eth'],
+            L: () => [sprite('dai'), area(), solid(), 'dai'],
+            M: () => [sprite('matic'), area(), solid(), 'matic'],
         }
+
+        console.log("here");
 
         addLevel(map, levelCfg)
 
@@ -51,33 +70,18 @@ export const hallScene = () => {
             starting_animation,
         })
 
-        const nft = add([
-            text('NFT Room >'),
-            scale(0.3),
-            pos(DIMENSION.x / 2 - 175, NFT_ROOM_TEXT_HEIGHT),
-            { value: 0 },
-        ])
+        // player.onCollide("exit", () => {
+        //     go("hall", { position })
+        // })
 
-        changeRoom(player, 'exit', 'Press X to exit your room', () => {
-            go('game', { position: entry_blocks.building })
-        })
 
-        changeRoom(player, 'asset-entry', 'Prexx X to see your asset', () => {
-            go('asset', {})
-        })
+        // changeRoom(player, 'exit', 'Press X to exit your room', () => {
+        //     go('game', { position: entry_blocks.building })
+        // })
 
-        changeRoom(
-            player,
-            'nfts-entry',
-            'Press X to NFT room',
-            () => {
-                nftsScene()
-                go('nfts', { position: { x: 32, y: NFT_ROOM_TEXT_HEIGHT } })
-            },
-            {
-                x: -150,
-                y: 15,
-            }
-        )
+
     })
+
+
+
 }
