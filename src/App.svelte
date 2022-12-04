@@ -12,7 +12,7 @@
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
     import { getNotifications } from './integrations/push'
-    
+
     import { loadPolygon } from './polygon'
 
     let truck_obj
@@ -181,11 +181,14 @@
             }
             console.log(counter_polygon.x, counter_polygon.width)
             for (let x = 0; x <= counter_polygon.width; x++) {
-                for (let y = counter_polygon.y; y < counter_polygon.height; y++) {
+                for (
+                    let y = counter_polygon.y;
+                    y < counter_polygon.height;
+                    y++
+                ) {
                     map = setOnMap(map, counter_polygon.x - x, y, 'C')
                 }
             }
-
 
             add([
                 text('LIFI\nMovers\nETH'),
@@ -196,11 +199,10 @@
 
             add([
                 text('LIFI\nMovers\nPolygon'),
-                pos(DIMENSION.x/2-65, 30),
+                pos(DIMENSION.x / 2 - 65, 30),
                 scale(0.2),
                 layer('ui'),
             ])
-
 
             const levelCfg = {
                 width: TILE.width,
@@ -328,7 +330,7 @@
     loadSprite('matic', 'matic.png') //done
     loadSprite('dai', 'dai.png') //done
 
-    loadSprite('mailbox', 'mailbox.png') ; //done
+    loadSprite('mailbox', 'mailbox.png') //done
 
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
@@ -390,7 +392,7 @@
     }
 
     loadBridge()
-    go('bridge', { position: player_poistion })
+    // go('bridge', { position: player_poistion })
 
     // hallScene()
     // go('hall', {})
@@ -398,20 +400,21 @@
     // go('game', {
     //     position: player_poistion,
     // })
-    // loadPolygon()
-    // go('polygon', { position: player_poistion })
+    loadPolygon()
+    go('polygon', { position: player_poistion })
 
-    let Notificationitems;
+    let Notificationitems
 
-    SHOW_NOTIFICATION.subscribe( async (value) => {
-        Notificationitems = [];
-        if(value){
-            showNotifications = true;
-             Notificationitems = (await getNotifications( window.signer )).feeds;
-        }else{
-            showNotifications = false;
+    SHOW_NOTIFICATION.subscribe(async (value) => {
+        Notificationitems = []
+        if (value) {
+            showNotifications = true
+            // @ts-ignore
+            Notificationitems = (await getNotifications(window.signer)).feeds
+        } else {
+            showNotifications = false
         }
-    } )
+    })
 
     // debug.inspect= true
 </script>
@@ -505,50 +508,58 @@
     </Modal>
 {/if}
 
-
 {#if showNotifications}
-<Modal on:close={() => (showNotifications = false)}>
-    <div
-      class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700"
-    >
-      <div class="p-4 sm:p-7">
-        <div class="text-center">
-          <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">
-            Notifications 
-          </h1>
-          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-           
-          <a class="text-blue-600 decoration-2 hover:underline font-medium" target="_blank" href="https://push.org/">
-            Powered by Push Protocol
-          </a>
-        </p>
-        </div>
+    <Modal on:close={() => (showNotifications = false)}>
+        <div
+            class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700"
+        >
+            <div class="p-4 sm:p-7">
+                <div class="text-center">
+                    <h1
+                        class="block text-2xl font-bold text-gray-800 dark:text-white"
+                    >
+                        Notifications
+                    </h1>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        <a
+                            class="text-blue-600 decoration-2 hover:underline font-medium"
+                            target="_blank"
+                            href="https://push.org/"
+                        >
+                            Powered by Push Protocol
+                        </a>
+                    </p>
+                </div>
 
-        <div class="mt-5">
-            <div class="grid gap-y-4">
-              <div class='container'>
-                <ul>
-                  {#each Notificationitems as item}
-                    <li>
-                          <h1>{item.payload.notification.title}</h1>
-                          <span>{item.payload.notification.body}</span>
-                    </li>
-                  {/each}
-                </ul>
-              </div>
+                <div class="mt-5">
+                    <div class="grid gap-y-4">
+                        <div class="container">
+                            <ul>
+                                {#each Notificationitems as item}
+                                    <li>
+                                        <h1>
+                                            {item.payload.notification.title}
+                                        </h1>
+                                        <span
+                                            >{item.payload.notification
+                                                .body}</span
+                                        >
+                                    </li>
+                                {/each}
+                            </ul>
+                        </div>
 
-              
-                <button
-                  on:click={() => { SHOW_NOTIFICATION.set(false) } }
-                  class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
-                  >Cancel</button>
-              
-              </div>
+                        <button
+                            on:click={() => {
+                                SHOW_NOTIFICATION.set(false)
+                            }}
+                            class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                            >Cancel</button
+                        >
+                    </div>
+                </div>
+                <!-- </form> -->
             </div>
-          <!-- </form> -->
         </div>
-    </div>
-  
-  </Modal>
-
+    </Modal>
 {/if}

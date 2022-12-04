@@ -15,10 +15,10 @@ export const assetScene = () => {
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
 
     scene('assets', async ({ position, starting_animation }) => {
-        const provider = await window.signer.provider;
+        const provider = await window.signer.provider
         const chainId = (await provider.getNetwork()).chainId
         // const chainId = 1;
-        const address = await window.signer.getAddress();
+        const address = await window.signer.getAddress()
         // const address = '0x30f6bB77f74e74d627771E7B757e984A1d6457f9'
 
         const { ETH, DAI, MATIC } = await fetchTokenDetails(address, chainId)
