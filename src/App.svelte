@@ -392,7 +392,7 @@
     }
 
     loadBridge()
-    // go('bridge', { position: player_poistion })
+    go('game', { position: player_poistion })
 
     // hallScene()
     // go('hall', {})
