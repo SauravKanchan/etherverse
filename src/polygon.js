@@ -1,4 +1,4 @@
-import { hallScene } from './asset'
+import { hallScene } from './home'
 import { createBuilding, createCity } from './city'
 import { DIMENSION, SCALE } from './constant'
 import { createPlayer } from './player'
@@ -7,7 +7,7 @@ import { changeRoom } from './utils'
 
 export const loadPolygon = () => {
     loadRoot('assets/')
-    loadSprite('grass', 'grass.png')
+    loadSprite('polygon_grass', 'polygon_grass.png')
     loadSprite('bb', 'building_bottom.png')
     loadSprite('mb', 'building_middle.png')
     loadSprite('door', 'door.png')
@@ -27,7 +27,7 @@ export const loadPolygon = () => {
     loadSprite('entry', 'entry_block.png')
     scene('polygon', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
-        let { map, levelCfg } = createCity()
+        let { map, levelCfg } = createCity(true)
         createBuilding(map)
         addLevel(map, levelCfg)
         const entry_pos = get('building_entry')[1]
@@ -57,12 +57,15 @@ export const loadPolygon = () => {
             'Press X to enter your room',
             () => {
                 hallScene()
-                go('hall', {})
+                go('hall', { city: 'polygon' })
             }
         )
+
         let one_time = action(() => {
-            if (player.pos.x >= DIMENSION.x) {
-                go('bridge', { position: { x: 0, y: player.pos.y } })
+            if (player.pos.x <= 0) {
+                go('bridge', {
+                    position: { x: DIMENSION.x / 2, y: player.pos.y },
+                })
                 one_time()
             }
         })
