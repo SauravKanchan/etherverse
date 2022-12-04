@@ -332,6 +332,12 @@
 
     loadSprite('mailbox', 'mailbox.png') //done
 
+    loadBridge()
+    loadPolygon()
+    hallScene()
+
+
+
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
         let { map, levelCfg } = createCity()
@@ -398,10 +404,6 @@
         y: DIMENSION.y / (SCALE * 2),
     }
 
-    loadBridge()
-    loadPolygon()
-    hallScene()
-    go('game', { position: player_poistion })
 
     go('game', {
         position: player_poistion,
