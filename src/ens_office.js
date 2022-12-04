@@ -6,10 +6,7 @@ import { fetchEnsDetails } from "./integrations/ens/"
 import { ethers } from "ethers"
 
 export const ensScene = () => {
-    //Load Sprites
-    //     twitter.png
-    // github.png
-    // discord.png
+  
     loadRoot('assets/')
 
     loadSprite('twitter', 'twitter.png')//done
@@ -23,11 +20,6 @@ export const ensScene = () => {
 
     //@ts-ignore
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-    // const address = "0x5555763613a12d8f3e73be831dff8598089d3dca";
-
-
-    //check the ens properties which are available
 
     scene('ensOffice', async ({ position, starting_animation }) => {
 
@@ -166,21 +158,8 @@ export const ensScene = () => {
 
 
         changeRoom(player, 'exit', 'Press X exit to hall', ()=>{
-            // ensScene();
             go("hall", { position: {x:  map[0].length / 2 - 1, y: map.length - 2 }  })
         })
-
-
-        // const nft = add([
-        //     text('NFT Room >'),
-        //     scale(0.3),
-        //     pos(DIMENSION.x / 2 - 175, NFT_ROOM_TEXT_HEIGHT),
-        //     { value: 0 },
-        // ])
-
-        // changeRoom(player, 'exit', 'Press X to exit your room', () => {
-        //     go('game', { position: entry_blocks.building })
-        // })
 
 
     })

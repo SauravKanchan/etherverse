@@ -85,6 +85,7 @@
         loadSprite('water', 'water2.png')
         loadSprite('water_m', 'water_m.png')
         loadSprite('mailbox', 'mailbox.png')
+      
 
         scene('bridge', ({ position, starting_animation }) => {
             layers(['bg', 'obj', 'ui'], 'obj')
@@ -262,6 +263,11 @@
     loadSprite('nft1', 'arcane.jpeg')
     loadSprite('nft2', 'nft2.png')
     loadSprite('entry', 'entry_block.png')
+
+    loadSprite('eth', 'eth.png') ; //done
+    loadSprite('matic', 'matic.png') ; //done
+    loadSprite('dai', 'dai.png') ; //done
+
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
         let { map, levelCfg } = createCity()

@@ -6,7 +6,6 @@ import { changeRoom, setOnMap } from './utils'
 
 import { ensScene } from './ens_office'
 
-
 import { IS_LOCK } from './store.js'
 import { assetScene } from './asset'
 let lock
@@ -118,7 +117,7 @@ export const hallScene = () => {
         })
 
         changeRoom(player, 'asset-entry', 'Press X to see your assets', ()=>{
-          assetScene();
+            assetScene();
           go("assets", {position: {x:  map[0].length / 2 - 1, y: map.length - 2 } });
         })
 
