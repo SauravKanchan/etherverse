@@ -121,7 +121,7 @@ export const hallScene = () => {
             destroy(bridge_text);
             bridge_text = add([
                 text("Press N to view Notifications"),
-                scale(0.5),
+                scale(0.25),
                 layer("ui"),
                 pos(player.pos.x, player.pos.y),
                 lifespan(3, { fade: 2 }),

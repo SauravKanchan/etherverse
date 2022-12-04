@@ -374,7 +374,7 @@
         Notificationitems = [];
         if(value){
             showNotifications = true;
-             Notificationitems = await getNotifications();
+             Notificationitems = (await getNotifications( window.signer )).feeds;
         }else{
             showNotifications = false;
         }
@@ -484,9 +484,9 @@
             Notifications 
           </h1>
           <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Powered by Push Protocol
+           
           <a class="text-blue-600 decoration-2 hover:underline font-medium" target="_blank" href="https://push.org/">
-            Site
+            Powered by Push Protocol
           </a>
         </p>
         </div>
