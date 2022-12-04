@@ -338,11 +338,20 @@
 
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
+
+        // @ts-ignore
+        window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: "0x"+Number(1).toString(16) }],
+        })
+
         let { map, levelCfg } = createCity()
         createBuilding(map)
         addLevel(map, levelCfg)
         add([
-            text('view in full screen and\nclick on screen to interact\nmove right to see the bridge'),
+            text(
+                'view in full screen and\nclick on screen to interact\nmove right to see the bridge'
+            ),
             pos(100, 100),
             layer('ui'),
             scale(0.5),
