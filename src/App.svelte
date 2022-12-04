@@ -4,13 +4,14 @@
     import { hallScene, nftsScene } from './home'
     import { DIMENSION, SCALE, TILE } from './constant'
     import { changeRoom } from './utils'
-    import { BRIDGE_DURATION, ENTRY_BLOCKS } from './store'
+    import { BRIDGE_DURATION, ENTRY_BLOCKS, SHOW_NOTIFICATION } from './store'
     import Modal from './Modal.svelte'
     import { makeMap } from './city'
     import { createPlayer } from './player'
     import { setOnMap } from './utils'
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
+    import { getNotifications } from './integrations/push'
     
     let truck_obj
     let bridge_duration
@@ -268,6 +269,8 @@
     loadSprite('matic', 'matic.png') ; //done
     loadSprite('dai', 'dai.png') ; //done
 
+    loadSprite('mailbox', 'mailbox.png') ; //done
+
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
         let { map, levelCfg } = createCity()
@@ -325,6 +328,18 @@
     go('game', {
         position: player_poistion,
     })
+
+    let Notificationitems;
+
+    SHOW_NOTIFICATION.subscribe( async (value) => {
+        Notificationitems = [];
+        if(value){
+            showNotifications = true;
+             Notificationitems = await getNotifications();
+        }else{
+            showNotifications = false;
+        }
+    } )
 
     // debug.inspect= true
 </script>
@@ -416,4 +431,52 @@
             </div>
         </div>
     </Modal>
+{/if}
+
+
+{#if showNotifications}
+<Modal on:close={() => (showNotifications = false)}>
+    <div
+      class="mt-7 bg-white  rounded-xl shadow-lg dark:bg-gray-800 dark:border-gray-700"
+    >
+      <div class="p-4 sm:p-7">
+        <div class="text-center">
+          <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">
+            Notifications 
+          </h1>
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Powered by Push Protocol
+          <a class="text-blue-600 decoration-2 hover:underline font-medium" target="_blank" href="https://push.org/">
+            Site
+          </a>
+        </p>
+        </div>
+
+        <div class="mt-5">
+            <div class="grid gap-y-4">
+              <div class='container'>
+                <ul>
+                  {#each Notificationitems as item}
+                    <li>
+                          <h1>{item.payload.notification.title}</h1>
+                          <span>{item.payload.notification.body}</span>
+                    </li>
+                  {/each}
+                </ul>
+              </div>
+
+              
+                <button
+                  on:click={() => { SHOW_NOTIFICATION.set(false) } }
+                  class="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
+                  >Cancel</button>
+              
+              </div>
+            </div>
+          <!-- </form> -->
+        </div>
+    </div>
+  
+  </Modal>
+
 {/if}

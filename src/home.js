@@ -1,7 +1,7 @@
 import { makeMap } from './city'
 import { DIMENSION, SCALE, TILE } from './constant'
 import { createPlayer } from './player'
-import { ENTRY_BLOCKS } from './store'
+import { ENTRY_BLOCKS,SHOW_NOTIFICATION } from './store'
 import { changeRoom, setOnMap } from './utils'
 
 import { ensScene } from './ens_office'
@@ -66,6 +66,11 @@ export const hallScene = () => {
         setOnMap(map, map[0].length / 2 + 1, 1, 's')
         setOnMap(map, map[0].length / 2, 0, 'S')
 
+        //Notifications
+        setOnMap(map, 12,  6, 'f')
+        setOnMap(map, 12,  7, 'v')
+        setOnMap(map, 8,  8, 'F')
+
 
         const levelCfg = {
             width: 16,
@@ -80,7 +85,9 @@ export const hallScene = () => {
             e: () => [sprite('entry'), area(), 'exit'],
             s: () => [sprite('entry'), area(), 'ens-entry'],
             S: () => [sprite('door'), area(), 'ensOffice'],
-
+            f: () => [ sprite('mailbox'), area(),solid(), 'mailbox' ],
+            F : () => [ text("Notifications"), scale(0.25),layer("ui"), area()  ] ,
+            v : () => [ text("^"), scale(0.25),layer("ui"), area()  ] 
         }
 
         addLevel(map, levelCfg)
@@ -103,6 +110,29 @@ export const hallScene = () => {
         const player = createPlayer({
             position,
             starting_animation,
+        })
+
+        let bridge_text;
+
+        onCollide("player", "mailbox" , ()=> {
+            destroy(bridge_text);
+            bridge_text = add([
+                text("Press N to view Notifications"),
+                scale(0.5),
+                layer("ui"),
+                pos(player.pos.x, player.pos.y),
+                lifespan(3, { fade: 2 }),
+              ]);
+
+            const NotificationCounter = onKeyPress("n", async () => {
+                SHOW_NOTIFICATION.set(true);
+              })
+
+            wait(3, () => {
+                //@ts-ignore
+                NotificationCounter(window.signer);
+              });
+            
         })
 
         const nft = add([
