@@ -1,7 +1,7 @@
-import { makeMap } from "./city"
-import { DIMENSION } from "./constant"
-import { createPlayer } from "./player"
-import { setOnMap } from "./utils"
+import { makeMap } from './city'
+import { DIMENSION } from './constant'
+import { createPlayer } from './player'
+import { setOnMap } from './utils'
 
 export const hallScene = () => {
     scene('hall', ({ position, starting_animation }) => {
@@ -15,7 +15,7 @@ export const hallScene = () => {
         layers(['bg', 'obj', 'ui'], 'obj')
 
         let map = makeMap({ x: DIMENSION.x / 2 - 4, y: DIMENSION.y / 2 - 4 })
-        
+
         // border
         for (let i = 0; i < map.length; i++) {
             map = setOnMap(map, 0, i, '*')
@@ -62,8 +62,8 @@ export const hallScene = () => {
             go('game', { position: entry_blocks.building })
         })
 
-        changeRoom(player, 'asset-entry', 'Prexx X to see your asset', ()=>{
-          go("asset", {})
+        changeRoom(player, 'asset-entry', 'Prexx X to see your asset', () => {
+            go('asset', {})
         })
 
         changeRoom(

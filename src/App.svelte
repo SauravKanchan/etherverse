@@ -11,6 +11,7 @@
     import { setOnMap } from './utils'
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
+    import kaboom from 'kaboom'
     let truck_obj
     let bridge_duration
     let water_pos = {
@@ -58,8 +59,6 @@
         console.log(e)
     })
 
-
-
     const handleBridgeTransfer = async () => {
         // console.log("handler bridge");
         await bridgeToOtherNetwork({
@@ -97,10 +96,10 @@
             })
 
             // border
-            for (let i = 0; i < DIMENSION.y; i++) {
-                map = setOnMap(map, 0, i, '*')
-                map = setOnMap(map, map[0].length - 1, i, '*')
-            }
+            // for (let i = 0; i < DIMENSION.y; i++) {
+            //     map = setOnMap(map, 0, i, '*')
+            //     map = setOnMap(map, map[0].length - 1, i, '*')
+            // }
             for (let i = 0; i < DIMENSION.x; i++) {
                 map = setOnMap(map, i, 0, '*')
                 map = setOnMap(map, i, map.length - 1, '*')
@@ -149,7 +148,7 @@
             }
 
             const counter = {
-                x: 1,
+                x: 0,
                 y: 1,
                 width: 5,
                 height: 5,
@@ -202,7 +201,7 @@
             truck_obj = add([
                 sprite('truck'),
                 layer('obj'),
-                pos(DIMENSION.x / 4 - 300, DIMENSION.y / 4),
+                pos(DIMENSION.x / 4 - 300, DIMENSION.y / 4 - 50),
                 scale(1.125),
                 area(),
                 solid(),
@@ -232,6 +231,15 @@
                     bridgeCounter()
                 })
             })
+
+            let one_time = action(() => {
+                if (player.pos.x <= 0) {
+                    go('game', {
+                        position: { x: DIMENSION.x-10, y: player.pos.y },
+                    })
+                    one_time()
+                }
+            })
         })
     }
 
@@ -254,7 +262,6 @@
     loadSprite('nft1', 'arcane.jpeg')
     loadSprite('nft2', 'nft2.png')
     loadSprite('entry', 'entry_block.png')
-
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
         let { map, levelCfg } = createCity()
@@ -290,6 +297,12 @@
                 go('hall', {})
             }
         )
+        let one_time = action(() => {
+            if (player.pos.x >= DIMENSION.x) {
+                go('bridge', { position: { x: 0, y: player.pos.y } })
+                one_time()
+            }
+        })
     })
 
     let player_poistion = {
@@ -298,14 +311,14 @@
     }
 
     loadBridge()
-    go('bridge', { position: player_poistion })
+    // go('bridge', { position: player_poistion })
 
     // hallScene()
     // go('hall', {})
 
-    // go('game', {
-    //     position: player_poistion,
-    // })
+    go('game', {
+        position: player_poistion,
+    })
 
     // debug.inspect= true
 </script>

@@ -32,7 +32,7 @@ export const createPlayer = ({ position, starting_animation }) => {
         const right = keyIsDown('right')
         const up = keyIsDown('up')
         const down = keyIsDown('down')
-        const speed = 200
+        const speed = 300
         let scene_scale = player.getScale()
 
         const currAnim = player.curAnim()
@@ -41,7 +41,7 @@ export const createPlayer = ({ position, starting_animation }) => {
             player.pos.x > DIMENSION.x / (scene_scale * 2) &&
             player.pos.x < DIMENSION.x - DIMENSION.x / (scene_scale * 2)
         ) {
-            camPos(
+            currCam = camPos(
                 vec2(player.pos.x + DIMENSION.x / (scene_scale * 2), currCam.y)
             )
         }
