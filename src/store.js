@@ -11,3 +11,4 @@ export const ENTRY_BLOCKS = writable({
     },
 })
 export const BRIDGE_DURATION = writable()
+export const SHOW_NOTIFICATION = writable()
