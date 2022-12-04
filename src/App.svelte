@@ -326,7 +326,7 @@
     loadSprite('bridge_floor', 'bridge_floor.png')
     loadSprite('truck', 'truck.png')
     loadSprite('road', 'road.png')
-    loadSprite('bridgeNS', 'bridgeNS.png')
+    loadSprite('bridgeNS', 'bridgeNS-1.png')
     loadSprite('counter', 'entry_block.png')
     loadSprite('water', 'water2.png')
     loadSprite('water_m', 'water_m.png')
