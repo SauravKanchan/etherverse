@@ -6,7 +6,6 @@ import { fetchEnsDetails } from './integrations/ens/'
 import { ethers } from 'ethers'
 
 export const ensScene = () => {
-  
     loadRoot('assets/')
 
     loadSprite('twitter', 'twitter.png') //done
@@ -155,11 +154,10 @@ export const ensScene = () => {
             ])
         }
 
-
-        changeRoom(player, 'exit', 'Press X exit to hall', ()=>{
-            go("hall", { position: {x:  map[0].length / 2 - 1, y: map.length - 2 }  })
+        changeRoom(player, 'exit', 'Press X exit to hall', () => {
+            go('hall', {
+                position: { x: map[0].length / 2 - 1, y: map.length - 2 },
+            })
         })
-
-
     })
 }
