@@ -14,13 +14,17 @@ export const makeMap = (dimension = DIMENSION) => {
     return map
 }
 
-export const createCity = () => {
+export const createCity = (polygon = false) => {
     let map = makeMap()
 
     const levelCfg = {
         width: TILE.width,
         height: TILE.height,
-        ' ': () => [sprite('grass'), scale(1.25), layer('bg')],
+        ' ': () => [
+            sprite(polygon ? 'polygon_grass' : 'grass'),
+            scale(1.25),
+            layer('bg'),
+        ],
         '#': () => [sprite('mb'), area(), solid()],
         '-': () => [sprite('bb'), area(), solid()],
         '!': () => [sprite('door'), area(), solid(), 'building_door'],

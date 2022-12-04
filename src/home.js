@@ -6,7 +6,6 @@ import { changeRoom, setOnMap } from './utils'
 
 import { ensScene } from './ens_office'
 
-
 import { IS_LOCK } from './store.js'
 import { assetScene } from './asset'
 let lock
@@ -22,9 +21,11 @@ ENTRY_BLOCKS.subscribe((d) => {
 
 const NFT_ROOM_DOOR_ROW = 8
 const NFT_ROOM_TEXT_HEIGHT = 125
-let continuation
 export const hallScene = () => {
-    scene('hall', ({ position, starting_animation }) => {
+    scene('hall', ({ position, starting_animation, city }) => {
+        if (!city) {
+            city = 'game'
+        }
         if (!position) {
             position = { x: DIMENSION.x / 4 - 8, y: DIMENSION.y / 2 - 36 }
         }
@@ -61,12 +62,13 @@ export const hallScene = () => {
         setOnMap(map, 1, NFT_ROOM_DOOR_ROW, 'A')
         setOnMap(map, 1, NFT_ROOM_DOOR_ROW + 1, 'A')
 
-        //ENS Office
-        setOnMap(map, map[0].length / 2,  1, 's')
-        setOnMap(map, map[0].length / 2 - 1,  1, 's')
-        setOnMap(map, map[0].length / 2 + 1, 1, 's')
-        setOnMap(map, map[0].length / 2, 0, 'S')
-
+        if (city == 'game') {
+            //ENS Office
+            setOnMap(map, map[0].length / 2, 1, 's')
+            setOnMap(map, map[0].length / 2 - 1, 1, 's')
+            setOnMap(map, map[0].length / 2 + 1, 1, 's')
+            setOnMap(map, map[0].length / 2, 0, 'S')
+        }
 
         const levelCfg = {
             width: 16,
@@ -81,7 +83,6 @@ export const hallScene = () => {
             e: () => [sprite('entry'), area(), 'exit'],
             s: () => [sprite('entry'), area(), 'ens-entry'],
             S: () => [sprite('door'), area(), 'ensOffice'],
-
         }
 
         addLevel(map, levelCfg)
@@ -114,17 +115,21 @@ export const hallScene = () => {
         ])
 
         changeRoom(player, 'exit', 'Press X to exit your room', () => {
-            go('game', { position: entry_blocks.building })
+            go(city, { position: entry_blocks.building })
         })
 
-        changeRoom(player, 'asset-entry', 'Press X to see your assets', ()=>{
-          assetScene();
-          go("assets", {position: {x:  map[0].length / 2 - 1, y: map.length - 2 } });
+        changeRoom(player, 'asset-entry', 'Press X to see your assets', () => {
+            assetScene()
+            go('assets', {
+                position: { x: map[0].length / 2 - 1, y: map.length - 2 },
+            })
         })
 
-        changeRoom(player, 'ens-entry', 'Press X to check ENS Details', ()=>{
-            ensScene();
-            go("ensOffice", { position: {x:  map[0].length / 2 - 1, y: map.length - 2 }  })
+        changeRoom(player, 'ens-entry', 'Press X to check ENS Details', () => {
+            ensScene()
+            go('ensOffice', {
+                position: { x: map[0].length / 2 - 1, y: map.length - 2 },
+            })
         })
 
         changeRoom(
@@ -133,7 +138,10 @@ export const hallScene = () => {
             'Press X to NFT room',
             () => {
                 nftsScene()
-                go('nfts', { position: { x: 32, y: NFT_ROOM_TEXT_HEIGHT } })
+                go('nfts', {
+                    position: { x: 32, y: NFT_ROOM_TEXT_HEIGHT },
+                    city,
+                })
             },
             {
                 x: -150,
@@ -144,7 +152,10 @@ export const hallScene = () => {
 }
 
 export const nftsScene = () => {
-    scene('nfts', ({ position, starting_animation }) => {
+    scene('nfts', ({ position, starting_animation, city }) => {
+        if (!city) {
+            city = 'game'
+        }
         if (!position) {
             position = { x: 32, y: NFT_ROOM_TEXT_HEIGHT }
         }
@@ -211,74 +222,78 @@ export const nftsScene = () => {
         }
 
         loadRoot('')
-        fetch(
-            `https://api.nftport.xyz/v0/accounts/0x5555763613a12D8F3e73be831DFf8598089d3dCa?chain=ethereum&page_size=50&include=metadata&page_size=${NFT_COUNT}&continuation=${page}`,
-            options
-        )
-            .then((response) => response.json())
-            .then((response) => {
-                let x = NFT_START.x
-                let y = NFT_START.y
-                let c = 0
-                continuation = response.continuation
-                for (let i = 0; i < response.nfts.length; i++) {
-                    let nft = response.nfts[i]
-                    let name = `${nft['contract_address']}-${nft['token_id']}`
-                    const ZOOM = 4
-                    if (!nft['file_url']) continue
-                    loadSprite(name, nft['file_url']).then((d) => {
-                        let nft_obj = add([
-                            layer('obj'),
-                            sprite(name),
-                            pos(x, y),
-                            area(),
-                            scale(
-                                (ZOOM * TILE.width) / d.tex.width,
-                                (ZOOM * TILE.height) / d.tex.height
-                            ),
-                            solid(),
-                            name,
-                        ])
-                        x += 96
-                        if (c % 6 == 5) {
-                            y += 96
-                            x = NFT_START.x
-                        }
-                        c++
-
-                        player.onCollide(name, (d) => {
-                            if (lock) return
-                            // @ts-ignore
-                            if (player.text?.parent) {
-                                // @ts-ignore
-                                player.text = add([
-                                    text(nft['name']),
-                                    scale(0.2),
-                                    layer('ui'),
-                                    pos(player.pos.x, player.pos.y),
-                                    lifespan(3, { fade: 2 }),
-                                ])
+        const chain = city == 'game' ? 'ethereum' : 'polygon'
+        // @ts-ignore
+        window.signer.getAddress().then((address) => {
+            fetch(
+                `https://api.nftport.xyz/v0/accounts/${address}?chain=${chain}&page_size=50&include=metadata&page_size=${NFT_COUNT}&continuation=${page}`,
+                options
+            )
+                .then((response) => response.json())
+                .then((response) => {
+                    console.log(response)
+                    let x = NFT_START.x
+                    let y = NFT_START.y
+                    let c = 0
+                    for (let i = 0; i < response.nfts.length; i++) {
+                        let nft = response.nfts[i]
+                        let name = `${nft['contract_address']}-${nft['token_id']}`
+                        const ZOOM = 4
+                        if (!nft['file_url']) continue
+                        loadSprite(name, nft['file_url']).then((d) => {
+                            let nft_obj = add([
+                                layer('obj'),
+                                sprite(name),
+                                pos(x, y),
+                                area(),
+                                scale(
+                                    (ZOOM * TILE.width) / d.tex.width,
+                                    (ZOOM * TILE.height) / d.tex.height
+                                ),
+                                solid(),
+                                name,
+                            ])
+                            x += 96
+                            if (c % 6 == 5) {
+                                y += 96
+                                x = NFT_START.x
                             }
-                        })
+                            c++
 
-                        onKeyPress('x', () => {
-                            if (lock) return
-                            get(name).forEach((g) => {
-                                if (player.isTouching(g)) {
-                                    window.open(
-                                        `https://opensea.io/assets/ethereum/${nft['contract_address']}/${nft['token_id']}`,
-                                        '_blank'
-                                    )
-                                    IS_LOCK.set(true)
-                                    setTimeout(() => {
-                                        IS_LOCK.set(false)
-                                    }, 1000)
+                            player.onCollide(name, (d) => {
+                                if (lock) return
+                                // @ts-ignore
+                                if (player.text?.parent) {
+                                    // @ts-ignore
+                                    player.text = add([
+                                        text(nft['name']),
+                                        scale(0.2),
+                                        layer('ui'),
+                                        pos(player.pos.x, player.pos.y),
+                                        lifespan(3, { fade: 2 }),
+                                    ])
                                 }
                             })
+
+                            onKeyPress('x', () => {
+                                if (lock) return
+                                get(name).forEach((g) => {
+                                    if (player.isTouching(g)) {
+                                        window.open(
+                                            `https://opensea.io/assets/ethereum/${nft['contract_address']}/${nft['token_id']}`,
+                                            '_blank'
+                                        )
+                                        IS_LOCK.set(true)
+                                        setTimeout(() => {
+                                            IS_LOCK.set(false)
+                                        }, 1000)
+                                    }
+                                })
+                            })
                         })
-                    })
-                }
-            })
-            .catch((err) => console.error(err))
+                    }
+                })
+                .catch((err) => console.error(err))
+        })
     })
 }

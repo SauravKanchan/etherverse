@@ -11,7 +11,8 @@
     import { setOnMap } from './utils'
     import { bridgeToOtherNetwork } from './integrations/lifi'
     import { ethers } from 'ethers'
-    
+    import { loadPolygon } from './polygon'
+
     let truck_obj
     let bridge_duration
     let water_pos = {
@@ -48,10 +49,12 @@
     async function main() {
         if (typeof windowEthereum !== 'undefined') {
             provider = new ethers.providers.Web3Provider(windowEthereum)
-            signer = provider.getSigner()
-            // await provider.enable();
             await provider.send('eth_requestAccounts', [])
-            console.log('MetaMask is installed!')
+            signer = await provider.getSigner()
+            // @ts-ignore
+            window.signer = signer
+            // @ts-ignore
+            window.provider = provider
         }
     }
 
@@ -108,8 +111,16 @@
             // water
             water_pos = { ...water_pos, end: map[0].length - 5 }
             for (let x = 0; x < map[0].length; x++) {
-                if (x < water_pos.start || x > water_pos.end) continue
                 for (let y = 0; y < map.length; y++) {
+                    if (x < water_pos.start || x > water_pos.end) {
+                        if (
+                            x > water_pos.end &&
+                            !(y < 1 || y > map.length - 2)
+                        ) {
+                            map = setOnMap(map, x, y, 'p')
+                        }
+                        continue
+                    }
                     if (y < 1 || y > map.length - 2) continue
                     map = setOnMap(map, x, y, 'e')
                 }
@@ -167,6 +178,12 @@
                 height: TILE.height,
                 '*': () => [sprite('mb'), area(), solid(), scale(1.125)],
                 ' ': () => [sprite('bg'), area(), 'wall', scale(1.125)],
+                p: () => [
+                    sprite('polygon_grass'),
+                    area(),
+                    'wall',
+                    scale(1.125),
+                ],
                 w: () => [sprite('water'), area(), solid(), scale(1.125)],
                 n: () => [sprite('gate'), area(), 'wall', scale(1.125)],
                 g: () => [
@@ -235,7 +252,14 @@
             let one_time = action(() => {
                 if (player.pos.x <= 0) {
                     go('game', {
-                        position: { x: DIMENSION.x-10, y: player.pos.y },
+                        position: { x: DIMENSION.x - 10, y: player.pos.y },
+                    })
+                    one_time()
+                }
+                if (player.pos.x >= DIMENSION.x / 2) {
+                    loadPolygon()
+                    go('polygon', {
+                        position: { x: 10, y: player.pos.y },
                     })
                     one_time()
                 }
@@ -245,6 +269,7 @@
 
     loadRoot('assets/')
     loadSprite('grass', 'grass.png')
+    loadSprite('polygon_grass', 'polygon_grass.png')
     loadSprite('bb', 'building_bottom.png')
     loadSprite('mb', 'building_middle.png')
     loadSprite('door', 'door.png')
@@ -303,6 +328,17 @@
                 one_time()
             }
         })
+
+        if (DIMENSION.x - player.pos.x < 100) {
+            camPos(vec2(player.pos.x, player.pos.y + DIMENSION.y / (SCALE * 2)))
+        } else {
+            camPos(
+                vec2(
+                    player.pos.x + DIMENSION.x / (SCALE * 2),
+                    player.pos.y + DIMENSION.y / (SCALE * 2)
+                )
+            )
+        }
     })
 
     let player_poistion = {
@@ -313,12 +349,14 @@
     loadBridge()
     // go('bridge', { position: player_poistion })
 
-    hallScene()
-    go('hall', {})
+    // hallScene()
+    // go('hall', {})
 
     go('game', {
         position: player_poistion,
     })
+    // loadPolygon()
+    // go('polygon', { position: player_poistion })
 
     // debug.inspect= true
 </script>

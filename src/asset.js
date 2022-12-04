@@ -4,18 +4,15 @@ import { createPlayer } from './player'
 import { setOnMap } from './utils'
 
 export const assetScene = () => {
- 
-    loadRoot('assets/');
-    loadSprite('eth', 'eth.png') ; //done
-    loadSprite('matic', 'matic.png') ; //done
-    loadSprite('dai', 'dai.png') ; //done
-   
+    loadRoot('assets/')
+    loadSprite('eth', 'eth.png') //done
+    loadSprite('matic', 'matic.png') //done
+    loadSprite('dai', 'dai.png') //done
+
     //@ts-ignore
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
 
-
     scene('assets', async ({ position, starting_animation }) => {
-
         if (!position) {
             position = { x: DIMENSION.x / 4 - 8, y: DIMENSION.y / 2 - 36 }
         }
@@ -47,7 +44,6 @@ export const assetScene = () => {
         setOnMap(map, 4, 4, 'K') //eth
         setOnMap(map, 8, 4, 'L') //dai
         setOnMap(map, 12, 4, 'M') // matic
-     
 
         const levelCfg = {
             width: 16,
@@ -61,7 +57,7 @@ export const assetScene = () => {
             M: () => [sprite('matic'), area(), solid(), 'matic'],
         }
 
-        console.log("here");
+        console.log('here')
 
         addLevel(map, levelCfg)
 
@@ -74,14 +70,8 @@ export const assetScene = () => {
         //     go("hall", { position })
         // })
 
-
         // changeRoom(player, 'exit', 'Press X to exit your room', () => {
         //     go('game', { position: entry_blocks.building })
         // })
-
-
     })
-
-
-
 }
