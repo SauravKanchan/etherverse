@@ -78,18 +78,6 @@
 
     const loadBridge = () => {
         loadRoot('assets/')
-        loadSprite('fence-left', 'fence_left.png')
-        loadSprite('fence-right', 'fence_right.png')
-        loadSprite('fence-middle', 'fence_middle.png')
-        loadSprite('bridge', 'bridge.png')
-        loadSprite('bridge_floor', 'bridge_floor.png')
-        loadSprite('truck', 'truck.png')
-        loadSprite('road', 'road.png')
-        loadSprite('bridgeNS', 'bridgeNS.png')
-        loadSprite('counter', 'entry_block.png')
-        loadSprite('water', 'water2.png')
-        loadSprite('water_m', 'water_m.png')
-        loadSprite('mailbox', 'mailbox.png')
 
         scene('bridge', ({ position, starting_animation }) => {
             layers(['bg', 'obj', 'ui'], 'obj')
@@ -331,12 +319,22 @@
     loadSprite('dai', 'dai.png') //done
 
     loadSprite('mailbox', 'mailbox.png') //done
+    loadSprite('fence-left', 'fence_left.png')
+    loadSprite('fence-right', 'fence_right.png')
+    loadSprite('fence-middle', 'fence_middle.png')
+    loadSprite('bridge', 'bridge.png')
+    loadSprite('bridge_floor', 'bridge_floor.png')
+    loadSprite('truck', 'truck.png')
+    loadSprite('road', 'road.png')
+    loadSprite('bridgeNS', 'bridgeNS.png')
+    loadSprite('counter', 'entry_block.png')
+    loadSprite('water', 'water2.png')
+    loadSprite('water_m', 'water_m.png')
+    loadSprite('mailbox', 'mailbox.png')
 
     loadBridge()
     loadPolygon()
     hallScene()
-
-
 
     scene('game', ({ position }) => {
         layers(['bg', 'obj', 'ui'], 'obj')
@@ -344,11 +342,11 @@
         createBuilding(map)
         addLevel(map, levelCfg)
         add([
-            text("view in full screen and\nclick on screen to interact"),
-            pos(100,100),
-            layer("ui"),
+            text('view in full screen and\nclick on screen to interact'),
+            pos(100, 100),
+            layer('ui'),
             scale(0.5),
-            lifespan(3, { fade: 2 })
+            lifespan(3, { fade: 2 }),
         ])
         const entry_pos = get('building_entry')[1]
             .inspect()
@@ -403,7 +401,6 @@
         x: DIMENSION.x / (SCALE * 2),
         y: DIMENSION.y / (SCALE * 2),
     }
-
 
     go('game', {
         position: player_poistion,
